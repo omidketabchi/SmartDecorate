@@ -40,7 +40,7 @@ public class DeviceInfoAdapter extends RecyclerView.Adapter<DeviceInfoAdapter.De
     @Override
     public void onBindViewHolder(@NonNull DeviceInfoViewHolder holder, int position) {
 
-        final DeviceInfoModel model = new DeviceInfoModel();
+        final DeviceInfoModel model = models.get(position);
 
         holder.txtDeviceName.setText(model.getDeviceName());
         holder.txtDeviceIp.setText(model.getDeviceIp());

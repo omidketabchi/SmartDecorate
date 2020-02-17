@@ -113,17 +113,25 @@ public class FragmentLogin extends Fragment {
 
     private void register() {
 
-        String url = "";
+        String url = "https://api.myjson.com/bins/xb3pw";
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
 
                 if (parseLoginResponse(response)) {
 
+                    Bundle bundle = new Bundle();
+                    bundle.putString("phone", edtPhone.getText().toString());
+
                     FragmentManager fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
                     FragmentTransaction transaction = fragmentManager.beginTransaction();
-                    transaction.add(R.id.frm_splash_frame, new FragmentMainPage());
+
+                    FragmentVerificationCode fragmentVerificationCode = new FragmentVerificationCode();
+                    fragmentVerificationCode.setArguments(bundle);
+
+                    transaction.add(R.id.frm_splash_frame, fragmentVerificationCode);
+                    transaction.addToBackStack(null);
                     transaction.commit();
                 }
             }
@@ -159,10 +167,11 @@ public class FragmentLogin extends Fragment {
             String errorCode = response.getString("errorCode");
             String errorDescription = response.getString("errorDescription");
 
-            if (errorCode.equals("000")) {
-                return true;
-            } else {
+            if (!errorCode.equals("000")) {
+
                 Toast.makeText(getContext(), errorDescription + "[ " + errorCode + " ]", Toast.LENGTH_SHORT).show();
+
+                return false;
             }
 
         } catch (JSONException e) {
@@ -172,6 +181,6 @@ public class FragmentLogin extends Fragment {
             e.printStackTrace();
         }
 
-        return false;
+        return true;
     }
 }

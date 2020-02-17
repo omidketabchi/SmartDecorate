@@ -82,7 +82,7 @@ public class FragmentDeviceList extends Fragment {
 
             DeviceInfoModel model = new DeviceInfoModel();
 
-            model.setId(cursor.getString(0));
+            model.setId(String.valueOf(cursor.getInt(0)));
             model.setDeviceName(cursor.getString(1));
             model.setDeviceIp(cursor.getString(2));
 

@@ -9,7 +9,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/cv_mainMenuItem_leftBox"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="4dp"
         android:layout_marginRight="4dp"
@@ -46,7 +46,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/cv_mainMenuItem_rightBox"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:layout_marginLeft="4dp"
         android:layout_marginTop="4dp"
         android:layout_marginRight="8dp"

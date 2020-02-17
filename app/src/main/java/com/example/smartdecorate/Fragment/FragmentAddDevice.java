@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -50,8 +51,10 @@ public class FragmentAddDevice extends Fragment {
 
                 DeviceDataBase dataBase = new DeviceDataBase(getContext());
 
-                dataBase.insertDeviceInfo(edtDeviceName.getText().toString(),
+                long id = dataBase.insertDeviceInfo(edtDeviceName.getText().toString(),
                         edtDeviceIp.getText().toString());
+
+                Toast.makeText(getContext(), id + "", Toast.LENGTH_SHORT).show();
 
                 FragmentManager fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();

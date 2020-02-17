@@ -21,9 +21,9 @@ public class DeviceDataBase extends SQLiteOpenHelper {
 
     private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "( " +
 
-            COLUMN_ID + " TEXT PRIMARY KEY AUTOINCREMENT, " +
-            COLUMN_DEVICE_IP + " TEXT, " +
-            COLUMN_DEVICE_NAME + " TEXT " +
+            COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            COLUMN_DEVICE_NAME + " TEXT, " +
+            COLUMN_DEVICE_IP + " TEXT " +
             ");";
 
     public DeviceDataBase(@Nullable Context context) {

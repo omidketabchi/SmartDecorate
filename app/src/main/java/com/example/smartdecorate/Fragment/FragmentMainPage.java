@@ -51,15 +51,6 @@ public class FragmentMainPage extends Fragment {
 
             getMenuItemList();
 
-            MainMenuAdapter mainMenuAdapter = new MainMenuAdapter(getContext(), models);
-            recyclerView.setAdapter(mainMenuAdapter);
-
-            mainMenuAdapter.setOnMenuItemClick(new MainMenuAdapter.OnMenuItemClick() {
-                @Override
-                public void onMenuItemClick(String title) {
-                    doAction(title);
-                }
-            });
         }
 
         return view;
@@ -75,7 +66,7 @@ public class FragmentMainPage extends Fragment {
 
     private void getMenuItemList() {
 
-        String url = "";
+        String url = "https://api.myjson.com/bins/164j6s";
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONArray>() {
@@ -100,6 +91,17 @@ public class FragmentMainPage extends Fragment {
                                 e.printStackTrace();
                             }
                         }
+
+                        MainMenuAdapter mainMenuAdapter = new MainMenuAdapter(getContext(), models);
+                        recyclerView.setAdapter(mainMenuAdapter);
+
+                        mainMenuAdapter.setOnMenuItemClick(new MainMenuAdapter.OnMenuItemClick() {
+                            @Override
+                            public void onMenuItemClick(String title) {
+                                doAction(title);
+                            }
+                        });
+
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -120,14 +122,14 @@ public class FragmentMainPage extends Fragment {
 
         if (title.equals("افزودن دستگاه جدید")) {
 
-            FragmentManager manager = ((AppCompatActivity)getContext()).getSupportFragmentManager();
+            FragmentManager manager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
             FragmentTransaction transaction = manager.beginTransaction();
             transaction.add(R.id.frm_splash_frame, new FragmentAddDevice());
             transaction.commit();
 
         } else if (title.equals("لیست دستگاه ها")) {
 
-            FragmentManager manager = ((AppCompatActivity)getContext()).getSupportFragmentManager();
+            FragmentManager manager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
             FragmentTransaction transaction = manager.beginTransaction();
             transaction.add(R.id.frm_splash_frame, new FragmentDeviceList());
             transaction.commit();

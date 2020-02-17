@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -11,13 +12,14 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.example.smartdecorate.Fragment.FragmentLogin;
+import com.example.smartdecorate.Fragment.FragmentMainPage;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class SplashActivity extends AppCompatActivity {
 
-    ImageView   imgLogo;
+    ImageView imgLogo;
     FrameLayout frameLayout;
 
     @Override
@@ -28,6 +30,10 @@ public class SplashActivity extends AppCompatActivity {
         setupViews();
 
         showAnimation();
+
+
+        SharedPreferences sharedPreferences = getSharedPreferences("login", MODE_PRIVATE);
+        final String phone = sharedPreferences.getString("phone", "");
 
         final Timer timer = new Timer();
 
@@ -40,7 +46,12 @@ public class SplashActivity extends AppCompatActivity {
 
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.add(R.id.frm_splash_frame, new FragmentLogin());
+
+                if (!phone.isEmpty()) {
+                    transaction.add(R.id.frm_splash_frame, new FragmentMainPage());
+                } else {
+                    transaction.add(R.id.frm_splash_frame, new FragmentLogin());
+                }
 
                 transaction.commit();
             }
