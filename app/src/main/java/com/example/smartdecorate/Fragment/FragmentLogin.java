@@ -121,6 +121,10 @@ public class FragmentLogin extends Fragment {
 
                 if (parseLoginResponse(response)) {
 
+                    FragmentManager fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
+                    FragmentTransaction transaction = fragmentManager.beginTransaction();
+                    transaction.add(R.id.frm_splash_frame, new FragmentMainPage());
+                    transaction.commit();
                 }
             }
         }, new Response.ErrorListener() {

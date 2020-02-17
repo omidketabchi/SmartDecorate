@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/edt_fragmentAddDevice_deviceName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:background="@drawable/edt_style"
+        android:hint="نام دستگاه"
+        android:inputType="text"
+        android:padding="15dp" />
+
+    <EditText
+        android:id="@+id/edt_fragmentAddDevice_deviceIp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/edt_fragmentAddDevice_deviceName"
+        android:layout_margin="16dp"
+        android:background="@drawable/edt_style"
+        android:hint="آدرس دستگاه"
+        android:inputType="numberDecimal"
+        android:padding="15dp" />
+
+    <Button
+        android:id="@+id/btn_fragmentAddDevice_save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="8dp"
+        android:background="@drawable/btn_style"
+        android:padding="15dp"
+        android:text="ذخیره"
+        android:textColor="@color/colorWhite"
+        android:textSize="16sp" />
+
+</RelativeLayout>
