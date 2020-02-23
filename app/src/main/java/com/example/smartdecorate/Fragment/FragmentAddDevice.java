@@ -58,6 +58,7 @@ public class FragmentAddDevice extends Fragment {
 
                 FragmentManager fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
                 transaction.remove(FragmentAddDevice.this);
                 transaction.commit();
             }

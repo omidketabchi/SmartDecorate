@@ -124,6 +124,7 @@ public class FragmentMainPage extends Fragment {
 
             FragmentManager manager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
             FragmentTransaction transaction = manager.beginTransaction();
+            transaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
             transaction.add(R.id.frm_splash_frame, new FragmentAddDevice());
             transaction.commit();
 
@@ -131,6 +132,7 @@ public class FragmentMainPage extends Fragment {
 
             FragmentManager manager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
             FragmentTransaction transaction = manager.beginTransaction();
+            transaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
             transaction.add(R.id.frm_splash_frame, new FragmentDeviceList());
             transaction.commit();
         }

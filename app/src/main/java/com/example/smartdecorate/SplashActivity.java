@@ -46,6 +46,7 @@ public class SplashActivity extends AppCompatActivity {
 
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
 
                 if (!phone.isEmpty()) {
                     transaction.add(R.id.frm_splash_frame, new FragmentMainPage());

@@ -96,6 +96,7 @@ public class FragmentLogin extends Fragment {
 
                 FragmentManager manager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
                 FragmentTransaction transaction = manager.beginTransaction();
+                transaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
                 transaction.remove(FragmentLogin.this);
                 transaction.commit();
 
@@ -130,6 +131,7 @@ public class FragmentLogin extends Fragment {
                     FragmentVerificationCode fragmentVerificationCode = new FragmentVerificationCode();
                     fragmentVerificationCode.setArguments(bundle);
 
+                    transaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
                     transaction.add(R.id.frm_splash_frame, fragmentVerificationCode);
                     transaction.addToBackStack(null);
                     transaction.commit();
