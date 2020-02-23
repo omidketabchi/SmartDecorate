@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">SmartDecorate</string>
+    <string name="str_device_name_lamp">لامپ روشنایی</string>
+    <string name="str_device_name_led_stripe">نوار LED</string>
+    <string name="str_device_name_parking_door">درب پارکینگ</string>
+    <string name="str_device_name_tv">تلویزیون</string>
+    <string name="str_device_name_refrigerator">یخچال</string>
+    <string name="str_device_name_fan">کولر</string>
+
 </resources>

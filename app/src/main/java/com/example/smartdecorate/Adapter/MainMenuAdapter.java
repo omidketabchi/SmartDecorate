@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smartdecorate.Model.MainMenuItemModel;
@@ -44,6 +45,9 @@ public class MainMenuAdapter extends RecyclerView.Adapter<MainMenuAdapter.MainMe
 
         holder.txtLeftBox.setText(model.getLeftTitle());
         holder.txtRightBox.setText(model.getRightTitle());
+
+        holder.imgLeftBox.setBackground(ContextCompat.getDrawable(context, R.drawable.ic_shortcut_view_grid_plus));
+        holder.imgRightBox.setBackground(ContextCompat.getDrawable(context, R.drawable.ic_shortcut_format_list_text));
 
         if (!model.getLeftTitle().isEmpty()) {
             holder.leftBox.setOnClickListener(new View.OnClickListener() {

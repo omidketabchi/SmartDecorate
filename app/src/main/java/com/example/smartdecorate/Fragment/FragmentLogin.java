@@ -46,6 +46,7 @@ public class FragmentLogin extends Fragment {
     EditText edtPhone;
     Button btnRegister;
     ImageView imgLeftArrow;
+    FragmentManager fragmentManager;
 
     @Nullable
     @Override
@@ -65,6 +66,7 @@ public class FragmentLogin extends Fragment {
 
         ((AppCompatActivity) getContext()).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
+        fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
         edtPhone = (EditText) view.findViewById(R.id.edt_fragmentLogin_phone);
         btnRegister = (Button) view.findViewById(R.id.btn_fragmentLogin_register);
         imgLeftArrow = (ImageView) view.findViewById(R.id.img_fragmentLogin_leftArrow);
@@ -94,8 +96,7 @@ public class FragmentLogin extends Fragment {
             @Override
             public void onClick(View v) {
 
-                FragmentManager manager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
-                FragmentTransaction transaction = manager.beginTransaction();
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
                 transaction.remove(FragmentLogin.this);
                 transaction.commit();
@@ -125,16 +126,18 @@ public class FragmentLogin extends Fragment {
                     Bundle bundle = new Bundle();
                     bundle.putString("phone", edtPhone.getText().toString());
 
-                    FragmentManager fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
-                    FragmentTransaction transaction = fragmentManager.beginTransaction();
+                    FragmentTransaction removeTransaction = fragmentManager.beginTransaction();
+                    removeTransaction.remove(FragmentLogin.this);
+                    removeTransaction.commit();
+
+                    FragmentTransaction addTransaction = fragmentManager.beginTransaction();
 
                     FragmentVerificationCode fragmentVerificationCode = new FragmentVerificationCode();
                     fragmentVerificationCode.setArguments(bundle);
 
-                    transaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
-                    transaction.add(R.id.frm_splash_frame, fragmentVerificationCode);
-                    transaction.addToBackStack(null);
-                    transaction.commit();
+                    addTransaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
+                    addTransaction.add(R.id.frm_splash_frame, fragmentVerificationCode);
+                    addTransaction.commit();
                 }
             }
         }, new Response.ErrorListener() {

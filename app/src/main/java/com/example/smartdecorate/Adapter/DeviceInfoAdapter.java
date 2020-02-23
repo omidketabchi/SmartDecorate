@@ -21,6 +21,7 @@ public class DeviceInfoAdapter extends RecyclerView.Adapter<DeviceInfoAdapter.De
 
     Context context;
     List<DeviceInfoModel> models;
+    OnDeviceItemClick onDeviceItemClick;
 
     public DeviceInfoAdapter(Context context, List<DeviceInfoModel> models) {
 
@@ -44,6 +45,7 @@ public class DeviceInfoAdapter extends RecyclerView.Adapter<DeviceInfoAdapter.De
 
         holder.txtDeviceName.setText(model.getDeviceName());
         holder.txtDeviceIp.setText(model.getDeviceIp());
+        holder.txtDeviceType.setText(model.getDeviceType());
 
         holder.imgEdit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,6 +65,8 @@ public class DeviceInfoAdapter extends RecyclerView.Adapter<DeviceInfoAdapter.De
             @Override
             public void onClick(View v) {
                 Toast.makeText(context, model.getDeviceName(), Toast.LENGTH_SHORT).show();
+
+                onDeviceItemClick.deviceItemClick(model);
             }
         });
     }
@@ -78,6 +82,7 @@ public class DeviceInfoAdapter extends RecyclerView.Adapter<DeviceInfoAdapter.De
         ImageView imgDelete;
         TextView txtDeviceName;
         TextView txtDeviceIp;
+        TextView txtDeviceType;
         CardView parent;
 
         public DeviceInfoViewHolder(@NonNull View itemView) {
@@ -87,7 +92,16 @@ public class DeviceInfoAdapter extends RecyclerView.Adapter<DeviceInfoAdapter.De
             imgDelete = (ImageView) itemView.findViewById(R.id.img_deviceItem_delete);
             txtDeviceIp = (TextView) itemView.findViewById(R.id.txt_deviceItem_deviceIp);
             txtDeviceName = (TextView) itemView.findViewById(R.id.txt_deviceItem_deviceName);
+            txtDeviceType = (TextView) itemView.findViewById(R.id.txt_deviceItem_deviceTepe);
             parent = (CardView) itemView.findViewById(R.id.cv_deviceItem_parent);
         }
+    }
+
+    public interface OnDeviceItemClick{
+        void deviceItemClick(DeviceInfoModel model);
+    }
+
+    public void setOnDeviceItemClick(OnDeviceItemClick onDeviceItemClick) {
+        this.onDeviceItemClick = onDeviceItemClick;
     }
 }

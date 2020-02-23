@@ -32,6 +32,7 @@ public class FragmentVerificationCode extends Fragment {
     TextView txtDescription;
     EditText edtVerificationCode;
     Button btnSubmit;
+    FragmentManager manager;
 
     @Nullable
     @Override
@@ -50,6 +51,8 @@ public class FragmentVerificationCode extends Fragment {
     private void setupViews() {
 
         final String phone = getArguments().getString("phone");
+
+        manager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
 
         txtDescription = (TextView) view.findViewById(R.id.txt_fragmentVerificationCode_description);
         edtVerificationCode = (EditText) view.findViewById(R.id.edt_fragmentVerificationCode_code);
@@ -86,7 +89,6 @@ public class FragmentVerificationCode extends Fragment {
             @Override
             public void onClick(View v) {
 
-                FragmentManager manager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
                 FragmentTransaction transaction = manager.beginTransaction();
                 transaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
                 transaction.remove(FragmentVerificationCode.this);
@@ -105,11 +107,15 @@ public class FragmentVerificationCode extends Fragment {
                     editor.putString("phone", phone);
                     editor.apply();
 
-                    FragmentManager manager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
-                    FragmentTransaction transaction = manager.beginTransaction();
-                    transaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
-                    transaction.add(R.id.frm_splash_frame, new FragmentMainPage());
-                    transaction.commit();
+
+                    FragmentTransaction removeTransaction = manager.beginTransaction();
+                    removeTransaction.remove(FragmentVerificationCode.this);
+                    removeTransaction.commit();
+
+                    FragmentTransaction addTransaction = manager.beginTransaction();
+                    addTransaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
+                    addTransaction.add(R.id.frm_splash_frame, new FragmentMainPage());
+                    addTransaction.commit();
                 }
             }
         });

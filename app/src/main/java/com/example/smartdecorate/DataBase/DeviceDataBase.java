@@ -18,12 +18,14 @@ public class DeviceDataBase extends SQLiteOpenHelper {
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_DEVICE_NAME = "device_name";
     private static final String COLUMN_DEVICE_IP = "device_ip";
+    private static final String COLUMN_DEVICE_TYPE = "device_type";
 
     private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "( " +
 
             COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             COLUMN_DEVICE_NAME + " TEXT, " +
-            COLUMN_DEVICE_IP + " TEXT " +
+            COLUMN_DEVICE_IP + " TEXT, " +
+            COLUMN_DEVICE_TYPE + " TEXT" +
             ");";
 
     public DeviceDataBase(@Nullable Context context) {
@@ -46,12 +48,13 @@ public class DeviceDataBase extends SQLiteOpenHelper {
 
     }
 
-    public long insertDeviceInfo(String deviceName, String deviceIp) {
+    public long insertDeviceInfo(String deviceName, String deviceIp, String deviceType) {
 
         ContentValues contentValues = new ContentValues();
 
         contentValues.put(COLUMN_DEVICE_NAME, deviceName);
         contentValues.put(COLUMN_DEVICE_IP, deviceIp);
+        contentValues.put(COLUMN_DEVICE_TYPE, deviceType);
 
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
 

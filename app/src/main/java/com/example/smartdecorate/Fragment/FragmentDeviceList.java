@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -86,10 +87,37 @@ public class FragmentDeviceList extends Fragment {
             model.setId(String.valueOf(cursor.getInt(0)));
             model.setDeviceName(cursor.getString(1));
             model.setDeviceIp(cursor.getString(2));
+            model.setDeviceType(cursor.getString(3));
 
             models.add(model);
         }
 
-        recyclerView.setAdapter(new DeviceInfoAdapter(getContext(), models));
+        DeviceInfoAdapter adapter = new DeviceInfoAdapter(getContext(), models);
+        recyclerView.setAdapter(adapter);
+
+        adapter.setOnDeviceItemClick(new DeviceInfoAdapter.OnDeviceItemClick() {
+            @Override
+            public void deviceItemClick(DeviceInfoModel model) {
+
+                if (model.getDeviceType().equals(getString(R.string.str_device_name_led_stripe))) {
+
+                    Toast.makeText(getContext(), model.getDeviceType(), Toast.LENGTH_SHORT).show();
+
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable("model", model);
+                    FragmentLedStripInfo fragmentLedStripInfo = new FragmentLedStripInfo();
+                    fragmentLedStripInfo.setArguments(bundle);
+
+                    FragmentManager fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
+                    FragmentTransaction transaction = fragmentManager.beginTransaction();
+                    transaction.add(R.id.frm_splash_frame, fragmentLedStripInfo);
+                    transaction.addToBackStack(null);
+                    transaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
+                    transaction.commit();
+                } else {
+                    Toast.makeText(getContext(), model.getDeviceType(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 }

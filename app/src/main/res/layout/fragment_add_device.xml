@@ -25,6 +25,17 @@
         android:inputType="text"
         android:padding="15dp" />
 
+    <androidx.appcompat.widget.AppCompatSpinner
+        android:id="@+id/spn_fragmentAddDevice_deviceType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/edt_fragmentAddDevice_deviceIp"
+        android:layout_margin="16dp"
+        android:background="@drawable/edt_style"
+        android:hint="نوع دستگاه"
+        android:layoutDirection="rtl"
+        android:padding="8dp" />
+
     <Button
         android:id="@+id/btn_fragmentAddDevice_save"
         android:layout_width="match_parent"
