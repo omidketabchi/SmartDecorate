@@ -1,5 +1,7 @@
 package com.example.smartdecorate.Fragment;
 
+import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +20,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.smartdecorate.DataBase.DeviceDataBase;
+import com.example.smartdecorate.ENUM.DeviceType;
 import com.example.smartdecorate.R;
 
 import java.util.ArrayList;
@@ -30,6 +33,18 @@ public class FragmentAddDevice extends Fragment {
     Button btnSave;
     AppCompatSpinner spinner;
     ArrayList<String> deviceList;
+    private final int DEFAULT_COLOR;
+    private final String DEFAULT_EFFECT;
+    private final boolean DEFAULT_MORE_EFFECT;
+
+    public FragmentAddDevice() {
+
+//        int color = Color.parseColor("#" + Integer.toHexString(selectedColor));
+        DEFAULT_COLOR = 13224393;//Color.parseColor(String.valueOf(getResources().getColor(R.color.colorBlack)));
+        DEFAULT_EFFECT = "FX_MODE_STATIC";
+        DEFAULT_MORE_EFFECT = false;
+
+    }
 
     @Nullable
     @Override
@@ -54,25 +69,14 @@ public class FragmentAddDevice extends Fragment {
         btnSave = (Button) view.findViewById(R.id.btn_fragmentAddDevice_save);
         spinner = (AppCompatSpinner) view.findViewById(R.id.spn_fragmentAddDevice_deviceType);
 
-        deviceList.add(getString(R.string.str_device_name_lamp));
-        deviceList.add(getString(R.string.str_device_name_led_stripe));
-        deviceList.add(getString(R.string.str_device_name_parking_door));
-        deviceList.add(getString(R.string.str_device_name_tv));
-        deviceList.add(getString(R.string.str_device_name_refrigerator));
-        deviceList.add(getString(R.string.str_device_name_fan));
-
-        ArrayAdapter adapter = new ArrayAdapter(getContext(), R.layout.spinner_item, deviceList);
-
-        adapter.setDropDownViewResource(R.layout.spinner_item);
-
-        spinner.setAdapter(adapter);
-        spinner.setHapticFeedbackEnabled(true);
+        setSpinnerItems();
 
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                DeviceDataBase dataBase = new DeviceDataBase(getContext());
+                long id;
+                DeviceDataBase dataBase = new DeviceDataBase(getContext(), DeviceType.NOTHING);
 
                 String deviceName = edtDeviceName.getText().toString();
                 String deviceIp = edtDeviceIp.getText().toString();
@@ -81,9 +85,22 @@ public class FragmentAddDevice extends Fragment {
                 if (deviceName.isEmpty() || deviceIp.isEmpty()) {
                     Toast.makeText(getContext(), "فیلدهای خالی را پر کنید", Toast.LENGTH_SHORT).show();
                 } else {
-                    long id = dataBase.insertDeviceInfo(deviceName, deviceIp, deviceType);
+                    id = dataBase.insertDeviceInfo(deviceName, deviceIp, deviceType);
 
-                    Toast.makeText(getContext(), id + "", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "master:" + id, Toast.LENGTH_SHORT).show();
+
+                    if (deviceType.equals(getString(R.string.str_device_name_lamp))) {
+                        dataBase = new DeviceDataBase(getContext(), DeviceType.NOTHING);
+                        id = dataBase.insertLightBulbInfo(id, 0);
+
+                        Toast.makeText(getContext(), "detail:" + id, Toast.LENGTH_SHORT).show();
+                    } else if (deviceType.equals(getString(R.string.str_device_name_led_stripe))) {
+                        dataBase = new DeviceDataBase(getContext(), DeviceType.LED_STRIP);
+                        id = dataBase.insertLedDeviceInfo(id, DEFAULT_COLOR, DEFAULT_EFFECT,
+                                String.valueOf(DEFAULT_MORE_EFFECT));
+
+                        Toast.makeText(getContext(), "detail:" + id, Toast.LENGTH_SHORT).show();
+                    }
 
                     FragmentManager fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
                     FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -93,5 +110,25 @@ public class FragmentAddDevice extends Fragment {
                 }
             }
         });
+    }
+
+    private void setSpinnerItems() {
+
+        DeviceDataBase dataBase = new DeviceDataBase(getContext(), DeviceType.NOTHING);
+
+        Cursor cursor = dataBase.getCategoryInfo();
+
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+
+            deviceList.add(cursor.getString(1));
+        }
+
+        ArrayAdapter adapter = new ArrayAdapter(getContext(), R.layout.spinner_item, deviceList);
+
+        adapter.setDropDownViewResource(R.layout.spinner_item);
+
+        spinner.setAdapter(adapter);
+        spinner.setHapticFeedbackEnabled(true);
+
     }
 }

@@ -66,7 +66,7 @@ public class FragmentMainPage extends Fragment {
 
     private void getMenuItemList() {
 
-        String url = "https://api.myjson.com/bins/164j6s";
+        String url = "https://api.myjson.com/bins/11u5s4";
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONArray>() {
@@ -120,7 +120,7 @@ public class FragmentMainPage extends Fragment {
 
     private void doAction(String title) {
 
-        if (title.equals("افزودن دستگاه جدید")) {
+        if (title.equals(getString(R.string.str_add_new_device))) {
 
             FragmentManager manager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
             FragmentTransaction transaction = manager.beginTransaction();
@@ -128,12 +128,19 @@ public class FragmentMainPage extends Fragment {
             transaction.add(R.id.frm_splash_frame, new FragmentAddDevice());
             transaction.commit();
 
-        } else if (title.equals("لیست دستگاه ها")) {
+        } else if (title.equals(getString(R.string.str_devices_list))) {
 
             FragmentManager manager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
             FragmentTransaction transaction = manager.beginTransaction();
             transaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
             transaction.add(R.id.frm_splash_frame, new FragmentDeviceList());
+            transaction.commit();
+        } else if (title.equals(getString(R.string.str_category))) {
+
+            FragmentManager fragmentManager = ((AppCompatActivity)getContext()).getSupportFragmentManager();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
+            transaction.add(R.id.frm_splash_frame, new FragmentCategory());
             transaction.commit();
         }
     }

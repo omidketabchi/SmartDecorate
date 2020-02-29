@@ -5,44 +5,47 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smartdecorate.Model.CategoryModel;
 import com.example.smartdecorate.Model.DeviceInfoModel;
 import com.example.smartdecorate.Model.LedDeviceInfoModel;
+import com.example.smartdecorate.Model.LightBulbModel;
 import com.example.smartdecorate.R;
 
 import java.util.List;
 
-public class LedStripAdapter extends RecyclerView.Adapter<LedStripAdapter.LedStripViewHolder> {
+public class LightBulbAdapter extends RecyclerView.Adapter<LightBulbAdapter.LightBulbViewHolder> {
 
     Context context;
     List<DeviceInfoModel> deviceInfoModels;
-    List<LedDeviceInfoModel> ledDeviceInfoModels;
+    List<LightBulbModel> lightBulbModels;
     OnItemListClickListener onItemListClickListener;
 
-    public LedStripAdapter(Context context, List<DeviceInfoModel> deviceInfoModels,
-                           List<LedDeviceInfoModel> ledDeviceInfoModels) {
+    public LightBulbAdapter(Context context, List<DeviceInfoModel> deviceInfoModels,
+                            List<LightBulbModel> lightBulbModels) {
 
         this.context = context;
         this.deviceInfoModels = deviceInfoModels;
-        this.ledDeviceInfoModels = ledDeviceInfoModels;
+        this.lightBulbModels = lightBulbModels;
     }
 
     @NonNull
     @Override
-    public LedStripViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public LightBulbViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(context).inflate(R.layout.led_strip_item, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.light_bulb_item, parent, false);
 
-        return new LedStripViewHolder(view);
+        return new LightBulbViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull LedStripViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull LightBulbViewHolder holder, int position) {
 
         final DeviceInfoModel model = deviceInfoModels.get(position);
 
@@ -61,19 +64,19 @@ public class LedStripAdapter extends RecyclerView.Adapter<LedStripAdapter.LedStr
         return deviceInfoModels.size();
     }
 
-    public class LedStripViewHolder extends RecyclerView.ViewHolder {
+    public class LightBulbViewHolder extends RecyclerView.ViewHolder {
 
         TextView txtDeviceName;
-        TextView txtColor;
+        SwitchCompat switchCompat;
         CardView parent;
 
-        public LedStripViewHolder(@NonNull View itemView) {
+        public LightBulbViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            txtDeviceName = (TextView) itemView.findViewById(R.id.txt_ledStripItem_deviceName);
-            txtColor = (TextView) itemView.findViewById(R.id.txt_ledStripItem_color);
+            txtDeviceName = (TextView) itemView.findViewById(R.id.txt_lightBulbItem_deviceName);
+            switchCompat = (SwitchCompat) itemView.findViewById(R.id.swh_lightBulbItem_status);
 
-            parent = (CardView) itemView.findViewById(R.id.cv_ledStripItem_parent);
+            parent = (CardView) itemView.findViewById(R.id.cv_lightBulbItem_parent);
         }
     }
 

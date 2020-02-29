@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smartdecorate.Adapter.DeviceInfoAdapter;
 import com.example.smartdecorate.DataBase.DeviceDataBase;
+import com.example.smartdecorate.ENUM.DeviceType;
 import com.example.smartdecorate.Model.DeviceInfoModel;
 import com.example.smartdecorate.R;
 
@@ -54,8 +55,8 @@ public class FragmentDeviceList extends Fragment {
 
         models = new ArrayList<>();
 
-        imgBack = (ImageView) view.findViewById(R.id.img_fragmentDeviceList_back);
-        txtTitle = (TextView) view.findViewById(R.id.txt_fragmentDeviceList_title);
+        imgBack = (ImageView) view.findViewById(R.id.img_main_back);
+        txtTitle = (TextView) view.findViewById(R.id.txt_main_title);
         recyclerView = (RecyclerView) view.findViewById(R.id.rv_fragmentDeviceList_list);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -76,7 +77,7 @@ public class FragmentDeviceList extends Fragment {
 
     private void fillList() {
 
-        DeviceDataBase dataBase = new DeviceDataBase(getContext());
+        DeviceDataBase dataBase = new DeviceDataBase(getContext(), DeviceType.NOTHING);
 
         Cursor cursor = dataBase.getDeviceInfo();
 

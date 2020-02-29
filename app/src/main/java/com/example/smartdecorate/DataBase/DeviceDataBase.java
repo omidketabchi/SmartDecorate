@@ -6,37 +6,103 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Build;
 
 import androidx.annotation.Nullable;
+
+import com.example.smartdecorate.ENUM.DeviceType;
 
 public class DeviceDataBase extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "device_db";
     private static final int VERSION = 1;
-    private static final String TABLE_NAME = "device_table";
-    private static final String COLUMN_ID = "id";
-    private static final String COLUMN_DEVICE_NAME = "device_name";
-    private static final String COLUMN_DEVICE_IP = "device_ip";
-    private static final String COLUMN_DEVICE_TYPE = "device_type";
+    private DeviceType deviceType;
 
-    private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "( " +
+    /* DEVICE TABLE */
+    private static final String DEVICE_TABLE = "tlb_device";
+    private static final String COLUMN_DEVICE_TABLE_ID = "id";
+    private static final String COLUMN_DEVICE_TABLE_NAME = "device_name";
+    private static final String COLUMN_DEVICE_TABLE_IP = "device_ip";
+    private static final String COLUMN_DEVICE_TABLE_TYPE = "device_type";
 
-            COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            COLUMN_DEVICE_NAME + " TEXT, " +
-            COLUMN_DEVICE_IP + " TEXT, " +
-            COLUMN_DEVICE_TYPE + " TEXT" +
+    private static final String CREATE_DEVICE_TABLE_QUERY = "CREATE TABLE IF NOT EXISTS " + DEVICE_TABLE + "( " +
+
+            COLUMN_DEVICE_TABLE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            COLUMN_DEVICE_TABLE_NAME + " TEXT, " +
+            COLUMN_DEVICE_TABLE_IP + " TEXT, " +
+            COLUMN_DEVICE_TABLE_TYPE + " TEXT" +
             ");";
 
-    public DeviceDataBase(@Nullable Context context) {
+
+    /* LED EFFECTS TABLE */
+    private static final String LED_EFFECTS_TABLE = "tlb_ledEffects";
+    private static final String COLUMN_LED_EFFECTS_TABLE_ID = "id";
+    private static final String COLUMN_LED_EFFECTS_TABLE_COLOR = "color";
+    private static final String COLUMN_LED_EFFECTS_TABLE_EFFECT = "effect";
+    private static final String COLUMN_LED_EFFECTS_TABLE_MORE = "moreEffect";
+
+    private static final String CREATE_LED_EFFECTS_TABLE_QUERY = "CREATE TABLE IF NOT EXISTS " + LED_EFFECTS_TABLE + "( " +
+            COLUMN_LED_EFFECTS_TABLE_ID + " INTEGER, " +
+            COLUMN_LED_EFFECTS_TABLE_COLOR + " INTEGER, " +
+            COLUMN_LED_EFFECTS_TABLE_EFFECT + " TEXT, " +
+            COLUMN_LED_EFFECTS_TABLE_MORE + " TEXT " +
+            ");";
+
+    /* CATEGORY TABLE */
+    private static final String CATEGORY_TABLE = "tlb_category";
+    private static final String COLUMN_CATEGORY_TABLE_ID = "id";
+    private static final String COLUMN_CATEGORY_TABLE_TITLE = "title";
+
+    private static final String CREATE_CATEGORY_TABLE_QUERY = "CREATE TABLE IF NOT EXISTS " + CATEGORY_TABLE + " (" +
+            COLUMN_CATEGORY_TABLE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            COLUMN_CATEGORY_TABLE_TITLE + " TEXT " + ");";
+
+    /* LIGHT BULB TABLE */
+    private static final String LIGHT_BULB_TABLE = "tlb_lightBulb";
+    private static final String COLUMN_LIGHT_BULB_TABLE_ID = "id";
+    private static final String COLUMN_LIGHT_BULB_TABLE_STATUS = "status";
+
+    private static final String CREATE_LIGHT_BULB_TABLE_QUERY = "CREATE TABLE IF NOT EXISTS " + LIGHT_BULB_TABLE + " (" +
+            COLUMN_LIGHT_BULB_TABLE_ID + " INTEGER, " +
+            COLUMN_LIGHT_BULB_TABLE_STATUS + " INTEGER " + ");";
+
+    public Cursor getLedStripItems() {
+
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+
+        String query = "SELECT * FROM " + DEVICE_TABLE +
+                " INNER JOIN " + LED_EFFECTS_TABLE + " ON " +
+                "tbl_device.id == tbl_ledEffects.id" +
+                " WHERE tbl_device.type == \"نوار LED\"";
+
+        return sqLiteDatabase.rawQuery(query, null);
+    }
+
+    public Cursor getLightBulbItems() {
+
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+
+        String query = "SELECT * FROM " + DEVICE_TABLE +
+                " INNER JOIN " + LED_EFFECTS_TABLE + " ON " +
+                "tbl_device.id == tbl_lightBulb.id" +
+                " WHERE tbl_device.type == \"لامپ روشنایی\"";
+
+        return sqLiteDatabase.rawQuery(query, null);
+    }
+
+    public DeviceDataBase(@Nullable Context context, DeviceType deviceType) {
         super(context, DB_NAME, null, VERSION);
+
+        setDeviceType(deviceType);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         try {
 
-            db.execSQL(CREATE_TABLE);
+            db.execSQL(CREATE_DEVICE_TABLE_QUERY);
+            db.execSQL(CREATE_LED_EFFECTS_TABLE_QUERY);
+            db.execSQL(CREATE_CATEGORY_TABLE_QUERY);
+            db.execSQL(CREATE_LIGHT_BULB_TABLE_QUERY);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -52,19 +118,106 @@ public class DeviceDataBase extends SQLiteOpenHelper {
 
         ContentValues contentValues = new ContentValues();
 
-        contentValues.put(COLUMN_DEVICE_NAME, deviceName);
-        contentValues.put(COLUMN_DEVICE_IP, deviceIp);
-        contentValues.put(COLUMN_DEVICE_TYPE, deviceType);
+        contentValues.put(COLUMN_DEVICE_TABLE_NAME, deviceName);
+        contentValues.put(COLUMN_DEVICE_TABLE_IP, deviceIp);
+        contentValues.put(COLUMN_DEVICE_TABLE_TYPE, deviceType);
 
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
 
-        return sqLiteDatabase.insert(TABLE_NAME, null, contentValues);
+        return sqLiteDatabase.insert(DEVICE_TABLE, null, contentValues);
     }
 
     public Cursor getDeviceInfo() {
 
+        Cursor cursor;
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
 
-        return sqLiteDatabase.rawQuery("SELECT * FROM " + TABLE_NAME, null);
+        if (getDeviceType() == DeviceType.LED_STRIP) {
+            cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + LED_EFFECTS_TABLE, null);
+        } else {
+            cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + DEVICE_TABLE, null);
+        }
+
+        return cursor;
+    }
+
+    public long insertLedDeviceInfo(long id, int color, String effect, String moreEffect) {
+
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(COLUMN_LED_EFFECTS_TABLE_ID, id);
+        contentValues.put(COLUMN_LED_EFFECTS_TABLE_COLOR, color);
+        contentValues.put(COLUMN_LED_EFFECTS_TABLE_EFFECT, effect);
+        contentValues.put(COLUMN_LED_EFFECTS_TABLE_MORE, moreEffect);
+
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+
+        return sqLiteDatabase.insert(LED_EFFECTS_TABLE, null, contentValues);
+    }
+
+    public long insertLightBulbInfo(long id, int status) {
+
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(COLUMN_LIGHT_BULB_TABLE_ID, id);
+        contentValues.put(COLUMN_LIGHT_BULB_TABLE_STATUS, status);
+
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+
+        return sqLiteDatabase.insert(LIGHT_BULB_TABLE, null, contentValues);
+    }
+
+    public long updateLedDeviceInfo(long id, int color, String effect, String moreEffect) {
+
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(COLUMN_LED_EFFECTS_TABLE_ID, id);
+        contentValues.put(COLUMN_LED_EFFECTS_TABLE_COLOR, color);
+        contentValues.put(COLUMN_LED_EFFECTS_TABLE_EFFECT, effect);
+        contentValues.put(COLUMN_LED_EFFECTS_TABLE_MORE, moreEffect);
+
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+
+        return sqLiteDatabase.update(LED_EFFECTS_TABLE, contentValues,
+                COLUMN_LED_EFFECTS_TABLE_ID + " = ?",
+                new String[]{String.valueOf(id)});
+    }
+
+    public DeviceType getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(DeviceType deviceType) {
+        this.deviceType = deviceType;
+    }
+
+    public Cursor getOneLedDeviceInfo(String id) {
+
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+
+        return sqLiteDatabase.rawQuery("SELECT * FROM " + LED_EFFECTS_TABLE, null);
+
+//        return sqLiteDatabase.rawQuery("SELECT * FROM " + LED_EFFECTS_TABLE +
+//
+//                " WHERE " + COLUMN_LED_EFFECTS_TABLE_ID + " = ?", new String[]{id});
+    }
+
+    public long insertCategoryInfo(String id, String title) {
+
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(COLUMN_CATEGORY_TABLE_ID, Integer.valueOf(id));
+        contentValues.put(COLUMN_CATEGORY_TABLE_TITLE, title);
+
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+
+        return sqLiteDatabase.insert(CATEGORY_TABLE, null, contentValues);
+    }
+
+    public Cursor getCategoryInfo() {
+
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+
+        return sqLiteDatabase.rawQuery("SELECT * FROM " + CATEGORY_TABLE, null);
     }
 }
