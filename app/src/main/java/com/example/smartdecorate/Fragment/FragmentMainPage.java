@@ -23,8 +23,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.smartdecorate.Adapter.MainMenuAdapter;
+import com.example.smartdecorate.DataBase.DeviceDataBase;
+import com.example.smartdecorate.ENUM.DeviceType;
 import com.example.smartdecorate.Model.MainMenuItemModel;
 import com.example.smartdecorate.R;
+import com.example.smartdecorate.SplashActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,6 +41,7 @@ public class FragmentMainPage extends Fragment {
     View view;
     RecyclerView recyclerView;
     List<MainMenuItemModel> models;
+    DeviceDataBase dataBase;
 
     @Nullable
     @Override
@@ -49,8 +53,9 @@ public class FragmentMainPage extends Fragment {
 
             setupViews();
 
-            getMenuItemList();
+            getCategoryFromServer();
 
+            getMenuItemList();
         }
 
         return view;
@@ -59,6 +64,8 @@ public class FragmentMainPage extends Fragment {
     private void setupViews() {
 
         models = new ArrayList<>();
+
+        dataBase = new DeviceDataBase(getContext(), DeviceType.NOTHING);
 
         recyclerView = view.findViewById(R.id.rv_fragmentMainPage_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -135,6 +142,7 @@ public class FragmentMainPage extends Fragment {
             transaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
             transaction.add(R.id.frm_splash_frame, new FragmentDeviceList());
             transaction.commit();
+
         } else if (title.equals(getString(R.string.str_category))) {
 
             FragmentManager fragmentManager = ((AppCompatActivity)getContext()).getSupportFragmentManager();
@@ -143,5 +151,44 @@ public class FragmentMainPage extends Fragment {
             transaction.add(R.id.frm_splash_frame, new FragmentCategory());
             transaction.commit();
         }
+    }
+
+    private void getCategoryFromServer() {
+        String url = "https://api.myjson.com/bins/dkbg4";
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+
+                        for (int i = 0; i < response.length(); i++) {
+
+                            try {
+
+                                JSONObject jsonObject = response.getJSONObject(i);
+
+                                long id = dataBase.insertCategoryInfo(jsonObject.getString("id"),
+                                        jsonObject.getString("title"));
+
+                                Toast.makeText(getContext(), "" + id, Toast.LENGTH_SHORT).show();
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getContext(), error.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        jsonArrayRequest.setRetryPolicy(new DefaultRetryPolicy(15000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+        requestQueue.add(jsonArrayRequest);
     }
 }

@@ -15,26 +15,33 @@
     app:cardCornerRadius="8dp">
 
     <RelativeLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/txt_lightBulbItem_deviceName"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_margin="8dp"
-            android:padding="8dp"
-            android:textSize="16sp"
-            tools:text="نام دستگاه" />
+            android:orientation="vertical">
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/swh_lightBulbItem_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_margin="8dp" />
+            <TextView
+                android:id="@+id/txt_lightBulbItem_deviceName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:gravity="center"
+                android:padding="8dp"
+                android:textSize="16sp"
+                tools:text="نام دستگاه" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/swh_lightBulbItem_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="8dp"
+                android:theme="@style/SwitchTheme"/>
+
+        </LinearLayout>
 
     </RelativeLayout>
 

@@ -5,16 +5,21 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smartdecorate.Adapter.LedStripAdapter;
 import com.example.smartdecorate.Adapter.LightBulbAdapter;
+import com.example.smartdecorate.Connection.Connection;
 import com.example.smartdecorate.DataBase.DeviceDataBase;
 import com.example.smartdecorate.ENUM.DeviceType;
 import com.example.smartdecorate.Model.CategoryModel;
@@ -30,6 +35,7 @@ public class FragmentCategory extends Fragment {
 
     View view;
     TextView txtTitle;
+    ImageView imgBack;
     RecyclerView recyclerView1;
     RecyclerView recyclerView2;
     List<CategoryModel> categoryModels;
@@ -39,6 +45,7 @@ public class FragmentCategory extends Fragment {
     List<DeviceInfoModel> deviceInfoModels2;
     List<LightBulbModel> lightBulbModels;
     List<LedDeviceInfoModel> ledDeviceInfoModels;
+    FragmentManager fragmentManager;
 
     @Nullable
     @Override
@@ -87,8 +94,13 @@ public class FragmentCategory extends Fragment {
         deviceInfoModels1 = new ArrayList<>();
         deviceInfoModels2 = new ArrayList<>();
         categoryModels = new ArrayList<>();
+        lightBulbModels = new ArrayList<>();
+        ledDeviceInfoModels = new ArrayList<>();
+
+        fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
 
         txtTitle = (TextView) view.findViewById(R.id.txt_main_title);
+        imgBack = (ImageView) view.findViewById(R.id.img_main_back);
         txtList1 = (TextView) view.findViewById(R.id.txt_fragmentCategory_list1);
         txtList2 = (TextView) view.findViewById(R.id.txt_fragmentCategory_list2);
 
@@ -97,6 +109,18 @@ public class FragmentCategory extends Fragment {
 
         recyclerView2 = (RecyclerView) view.findViewById(R.id.rv_fragmentCategory_list2);
         recyclerView2.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+
+        txtTitle.setText("دسته بندی ها");
+
+        imgBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction removeTransaction = fragmentManager.beginTransaction();
+                removeTransaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
+                removeTransaction.remove(FragmentCategory.this);
+                removeTransaction.commit();
+            }
+        });
     }
 
     private void fillLists() {
@@ -126,6 +150,14 @@ public class FragmentCategory extends Fragment {
 
         recyclerView1.setAdapter(lightBulbAdapter);
 
+        lightBulbAdapter.setOnItemListClickListener(new LightBulbAdapter.OnItemListClickListener() {
+            @Override
+            public void onItemClick(DeviceInfoModel deviceInfoModel, int status) {
+                Connection connection = new Connection(getContext());
+                connection.setLightBubbleOnOrOff(deviceInfoModel.getDeviceIp(), status);
+            }
+        });
+
 
         cursor = null;
 
@@ -144,8 +176,8 @@ public class FragmentCategory extends Fragment {
             ledDeviceInfoModel.setId(cursor.getInt(4));
             ledDeviceInfoModel.setColor(cursor.getInt(5));
             ledDeviceInfoModel.setEffect(cursor.getString(6));
-            ledDeviceInfoModel.setMoreEffect(cursor.getString(7));
-
+            ledDeviceInfoModel.setSpeed(cursor.getInt(7));
+            ledDeviceInfoModel.setBrightness(cursor.getInt(8));
 
             deviceInfoModels2.add(deviceInfoModel);
             ledDeviceInfoModels.add(ledDeviceInfoModel);
@@ -154,5 +186,25 @@ public class FragmentCategory extends Fragment {
         LedStripAdapter ledStripAdapter = new LedStripAdapter(getContext(), deviceInfoModels2, ledDeviceInfoModels);
 
         recyclerView2.setAdapter(ledStripAdapter);
+
+        ledStripAdapter.setOnItemListClickListener(new LedStripAdapter.OnItemListClickListener() {
+            @Override
+            public void onItemClick(DeviceInfoModel deviceInfoModel) {
+
+                FragmentTransaction removeTransaction = fragmentManager.beginTransaction();
+                removeTransaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
+                removeTransaction.remove(FragmentCategory.this);
+                removeTransaction.commit();
+
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("model", deviceInfoModel);
+                FragmentLedStripInfo fragmentLedStripInfo = new FragmentLedStripInfo();
+                fragmentLedStripInfo.setArguments(bundle);
+                FragmentTransaction addTransaction = fragmentManager.beginTransaction();
+                removeTransaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
+                addTransaction.add(R.id.frm_splash_frame, fragmentLedStripInfo);
+                addTransaction.commit();
+            }
+        });
     }
 }

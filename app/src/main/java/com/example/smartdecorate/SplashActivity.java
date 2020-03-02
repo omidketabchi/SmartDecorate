@@ -38,7 +38,6 @@ public class SplashActivity extends AppCompatActivity {
 
     ImageView imgLogo;
     FrameLayout frameLayout;
-    DeviceDataBase dataBase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,8 +61,6 @@ public class SplashActivity extends AppCompatActivity {
                 timer.purge();
                 timer.cancel();
 
-                getCategoryFromServer();
-
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
@@ -81,8 +78,6 @@ public class SplashActivity extends AppCompatActivity {
 
     private void setupViews() {
 
-        dataBase = new DeviceDataBase(SplashActivity.this, DeviceType.NOTHING);
-
         imgLogo = (ImageView) findViewById(R.id.img_splash_logo);
         frameLayout = (FrameLayout) findViewById(R.id.frm_splash_frame);
     }
@@ -97,44 +92,5 @@ public class SplashActivity extends AppCompatActivity {
         alphaAnimation.setFillAfter(true);
 
         imgLogo.setAnimation(alphaAnimation);
-    }
-
-    private void getCategoryFromServer() {
-        String url = "https://api.myjson.com/bins/dkbg4";
-
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-
-                        for (int i = 0; i < response.length(); i++) {
-
-                            try {
-
-                                JSONObject jsonObject = response.getJSONObject(i);
-
-                                long id = dataBase.insertCategoryInfo(jsonObject.getString("id"),
-                                        jsonObject.getString("title"));
-
-                                Toast.makeText(SplashActivity.this, "" + id, Toast.LENGTH_SHORT).show();
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(SplashActivity.this, error.toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        jsonArrayRequest.setRetryPolicy(new DefaultRetryPolicy(15000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(jsonArrayRequest);
     }
 }

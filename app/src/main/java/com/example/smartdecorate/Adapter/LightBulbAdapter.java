@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -45,7 +46,7 @@ public class LightBulbAdapter extends RecyclerView.Adapter<LightBulbAdapter.Ligh
     }
 
     @Override
-    public void onBindViewHolder(@NonNull LightBulbViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final LightBulbViewHolder holder, int position) {
 
         final DeviceInfoModel model = deviceInfoModels.get(position);
 
@@ -54,7 +55,16 @@ public class LightBulbAdapter extends RecyclerView.Adapter<LightBulbAdapter.Ligh
         holder.parent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onItemListClickListener.onItemClick(model);
+
+                holder.switchCompat.setChecked(!holder.switchCompat.isChecked());
+                onItemListClickListener.onItemClick(model, (holder.switchCompat.isChecked()) ? 1 : 0);
+            }
+        });
+
+        holder.switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                onItemListClickListener.onItemClick(model, (holder.switchCompat.isChecked()) ? 1 : 0);
             }
         });
     }
@@ -81,7 +91,7 @@ public class LightBulbAdapter extends RecyclerView.Adapter<LightBulbAdapter.Ligh
     }
 
     public interface OnItemListClickListener {
-        void onItemClick(DeviceInfoModel deviceInfoModel);
+        void onItemClick(DeviceInfoModel deviceInfoModel, int status);
     }
 
     public void setOnItemListClickListener(OnItemListClickListener onItemListClickListener) {

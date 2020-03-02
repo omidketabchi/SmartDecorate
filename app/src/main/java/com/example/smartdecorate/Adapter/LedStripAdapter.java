@@ -1,6 +1,9 @@
 package com.example.smartdecorate.Adapter;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +48,12 @@ public class LedStripAdapter extends RecyclerView.Adapter<LedStripAdapter.LedStr
     public void onBindViewHolder(@NonNull LedStripViewHolder holder, int position) {
 
         final DeviceInfoModel model = deviceInfoModels.get(position);
+
+        int color = Color.parseColor("#" + Integer.toHexString(ledDeviceInfoModels.get(position).getColor()));
+
+        Drawable background = holder.txtColor.getBackground();
+        GradientDrawable gradientDrawable = (GradientDrawable) background;
+        gradientDrawable.setColor(color);
 
         holder.txtDeviceName.setText(model.getDeviceName());
 

@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.appcompat.widget.AppCompatSeekBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
@@ -35,6 +37,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.smartdecorate.Adapter.LedModeAdapter;
+import com.example.smartdecorate.Connection.Connection;
 import com.example.smartdecorate.DataBase.DeviceDataBase;
 import com.example.smartdecorate.ENUM.DeviceType;
 import com.example.smartdecorate.Model.DeviceInfoModel;
@@ -59,13 +62,15 @@ public class FragmentLedStripInfo extends Fragment {
     CardView moreEffectParent;
     CardView selectColorParent;
     RecyclerView recyclerView;
-    AppCompatCheckBox checkBox;
+    AppCompatSeekBar speed;
+    AppCompatSeekBar brightness;
     Toolbar toolbar;
     TextView txtDeviceName;
     DeviceInfoModel model;
     List<String> modeList;
     LedDeviceInfoModel ledDeviceInfoModel;
     DeviceDataBase dataBase;
+    Connection connection;
 
     @Nullable
     @Override
@@ -85,22 +90,25 @@ public class FragmentLedStripInfo extends Fragment {
 
             ledModeAdapter.setOnEffectClickListener(new LedModeAdapter.OnEffectClickListener() {
                 @Override
-                public void OnEffectClick(String effect) {
+                public void OnEffectClick(String effect, int position) {
 
                     txtEffect.setText(effect);
 
                     long id = dataBase.updateLedDeviceInfo(ledDeviceInfoModel.getId(),
                             ledDeviceInfoModel.getColor(), txtEffect.getText().toString(),
-                            (checkBox.isChecked()) ? "true" : "false");
+                            speed.getProgress(),
+                            brightness.getProgress());
 
                     Toast.makeText(getContext(), id + "", Toast.LENGTH_SHORT).show();
 
-                    sendParamToServer(Color.red(ledDeviceInfoModel.getColor()),
+                    connection.sendParamToServer(model.getDeviceIp(),
+                            Color.red(ledDeviceInfoModel.getColor()),
                             Color.green(ledDeviceInfoModel.getColor()),
                             Color.blue(ledDeviceInfoModel.getColor()),
                             Color.alpha(ledDeviceInfoModel.getColor()),
-                            txtEffect.getText().toString(),
-                            checkBox.isChecked());
+                            position,
+                            speed.getProgress(),
+                            brightness.getProgress());
                 }
             });
         }
@@ -110,6 +118,7 @@ public class FragmentLedStripInfo extends Fragment {
 
     private void setupViews() {
 
+        connection = new Connection(getContext());
         dataBase = new DeviceDataBase(getContext(), DeviceType.LED_STRIP);
 
         model = getArguments().getParcelable("model");
@@ -117,10 +126,11 @@ public class FragmentLedStripInfo extends Fragment {
 
         getLedDeviceInfo(model.getId());
 
-        toolbar = (androidx.appcompat.widget.Toolbar)view.findViewById(R.id.tlb_main_toolbar);
+        toolbar = (androidx.appcompat.widget.Toolbar) view.findViewById(R.id.tlb_main_toolbar);
         imgBack = (ImageView) view.findViewById(R.id.img_main_back);
         imgColor = (TextView) view.findViewById(R.id.img_fragmentLedStrip_selectColor);
-        checkBox = (AppCompatCheckBox) view.findViewById(R.id.chb_fragmentLedStrip_selectFX);
+        speed = (AppCompatSeekBar) view.findViewById(R.id.skb_fragmentLedStrip_speed);
+        brightness = (AppCompatSeekBar) view.findViewById(R.id.skb_fragmentLedStrip_brightness);
         selectColorParent = (CardView) view.findViewById(R.id.cv_fragmentLedStrip_selectColor);
         moreEffectParent = (CardView) view.findViewById(R.id.cv_fragmentLedStrip_moreEfect);
         txtDeviceName = (TextView) view.findViewById(R.id.txt_main_title);
@@ -130,7 +140,8 @@ public class FragmentLedStripInfo extends Fragment {
 
         txtDeviceName.setText(model.getDeviceName());
         txtEffect.setText(ledDeviceInfoModel.getEffect());
-        checkBox.setChecked(Boolean.valueOf(ledDeviceInfoModel.getMoreEffect()));
+        speed.setProgress(ledDeviceInfoModel.getSpeed());
+        brightness.setProgress(ledDeviceInfoModel.getBrightness());
 
         setCircleColor(ledDeviceInfoModel.getColor());
 
@@ -161,12 +172,13 @@ public class FragmentLedStripInfo extends Fragment {
 
                                 setCircleColor(selectedColor);
 
-                                sendParamToServer(Color.red(selectedColor),
+                                connection.sendParamToServer(model.getDeviceIp(), Color.red(selectedColor),
                                         Color.green(selectedColor),
                                         Color.blue(selectedColor),
                                         Color.alpha(selectedColor),
-                                        txtEffect.getText().toString(),
-                                        checkBox.isChecked());
+                                        getEffectPosition(txtEffect.getText().toString()),
+                                        speed.getProgress(),
+                                        brightness.getProgress());
                             }
                         })
                         .setPositiveButton("ok", new ColorPickerClickListener() {
@@ -177,7 +189,8 @@ public class FragmentLedStripInfo extends Fragment {
 
                                 long id = dataBase.updateLedDeviceInfo(ledDeviceInfoModel.getId(),
                                         selectedColor, txtEffect.getText().toString(),
-                                        (checkBox.isChecked()) ? "true" : "false");
+                                        speed.getProgress(),
+                                        brightness.getProgress());
 
                                 Toast.makeText(getContext(), id + "", Toast.LENGTH_SHORT).show();
                             }
@@ -193,24 +206,69 @@ public class FragmentLedStripInfo extends Fragment {
             }
         });
 
-        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+        speed.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
-                long id = dataBase.updateLedDeviceInfo(ledDeviceInfoModel.getId(),
-                        ledDeviceInfoModel.getColor(), txtEffect.getText().toString(),
-                        (checkBox.isChecked()) ? "true" : "false");
-
-                Toast.makeText(getContext(), id + "", Toast.LENGTH_SHORT).show();
-
-                sendParamToServer(Color.red(ledDeviceInfoModel.getColor()),
+                connection.sendParamToServer(model.getDeviceIp(),
+                        Color.red(ledDeviceInfoModel.getColor()),
                         Color.green(ledDeviceInfoModel.getColor()),
                         Color.blue(ledDeviceInfoModel.getColor()),
                         Color.alpha(ledDeviceInfoModel.getColor()),
-                        txtEffect.getText().toString(),
-                        checkBox.isChecked());
+                        getEffectPosition(txtEffect.getText().toString()),
+                        speed.getProgress(),
+                        brightness.getProgress());
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+                long id = dataBase.updateLedDeviceInfo(ledDeviceInfoModel.getId(),
+                        ledDeviceInfoModel.getColor(), txtEffect.getText().toString(),
+                        speed.getProgress(),
+                        brightness.getProgress());
+
+                Toast.makeText(getContext(), id + "", Toast.LENGTH_SHORT).show();
             }
         });
+
+        brightness.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+                connection.sendParamToServer(model.getDeviceIp(),
+                        Color.red(ledDeviceInfoModel.getColor()),
+                        Color.green(ledDeviceInfoModel.getColor()),
+                        Color.blue(ledDeviceInfoModel.getColor()),
+                        Color.alpha(ledDeviceInfoModel.getColor()),
+                        getEffectPosition(txtEffect.getText().toString()),
+                        speed.getProgress(),
+                        brightness.getProgress());
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+                long id = dataBase.updateLedDeviceInfo(ledDeviceInfoModel.getId(),
+                        ledDeviceInfoModel.getColor(), txtEffect.getText().toString(),
+                        speed.getProgress(),
+                        brightness.getProgress());
+
+                Toast.makeText(getContext(), id + "", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     private void fillList() {
@@ -278,34 +336,6 @@ public class FragmentLedStripInfo extends Fragment {
         modeList.add("FX_MODE_CUSTOM_3");
     }
 
-    private void sendParamToServer(int red, int green, int blue, int alpha, final String effect, boolean moreEffect) {
-
-        final String url = model.getDeviceIp() + "/RGB?" + "red=" + red +
-                "&green=" + green + "&blue=" + blue + "&effect=" + effect + "&moreEffect=" + moreEffect;
-
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-
-                Toast.makeText(getContext(), response.toString(), Toast.LENGTH_SHORT).show();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-                Toast.makeText(getContext(), error.toString(), Toast.LENGTH_SHORT).show();
-                Toast.makeText(getContext(), url, Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        jsonArrayRequest.setRetryPolicy(new DefaultRetryPolicy(15000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
-        requestQueue.add(jsonArrayRequest);
-    }
-
     private void getLedDeviceInfo(String deviceId) {
 
         ledDeviceInfoModel = new LedDeviceInfoModel();
@@ -317,7 +347,8 @@ public class FragmentLedStripInfo extends Fragment {
         ledDeviceInfoModel.setId(cursor.getInt(0));
         ledDeviceInfoModel.setColor(cursor.getInt(1));
         ledDeviceInfoModel.setEffect(cursor.getString(2));
-        ledDeviceInfoModel.setMoreEffect(cursor.getString(3));
+        ledDeviceInfoModel.setSpeed(cursor.getInt(3));
+        ledDeviceInfoModel.setBrightness(cursor.getInt(4));
     }
 
     private void setCircleColor(int selectedColor) {
@@ -334,5 +365,18 @@ public class FragmentLedStripInfo extends Fragment {
         toolbar.setBackgroundColor(color);
 
         ledDeviceInfoModel.setColor(selectedColor);
+    }
+
+    private int getEffectPosition(String effect) {
+
+        for (int i = 0; i < modeList.size(); i++) {
+
+            if (modeList.get(i).equals(effect)) {
+                return i;
+            }
+        }
+
+        // first effect is default.
+        return 0;
     }
 }

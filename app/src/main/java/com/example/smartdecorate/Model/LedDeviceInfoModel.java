@@ -5,7 +5,8 @@ public class LedDeviceInfoModel {
     private int id;
     private int color;
     private String effect;
-    private String moreEffect;
+    private int  speed;
+    private int  brightness;
 
     public int getId() {
         return id;
@@ -31,11 +32,19 @@ public class LedDeviceInfoModel {
         this.effect = effect;
     }
 
-    public String getMoreEffect() {
-        return moreEffect;
+    public int getSpeed() {
+        return speed;
     }
 
-    public void setMoreEffect(String moreEffect) {
-        this.moreEffect = moreEffect;
+    public void setSpeed(int speed) {
+        this.speed = speed;
+    }
+
+    public int getBrightness() {
+        return brightness;
+    }
+
+    public void setBrightness(int brightness) {
+        this.brightness = brightness;
     }
 }

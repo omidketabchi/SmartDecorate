@@ -36,6 +36,9 @@ public class FragmentAddDevice extends Fragment {
     private final int DEFAULT_COLOR;
     private final String DEFAULT_EFFECT;
     private final boolean DEFAULT_MORE_EFFECT;
+    private final int DEFAULT_BULB_STATUS;
+    private final int DEFAULT_SPEED;
+    private final int DEFAULT_BRIGHTNESS;
 
     public FragmentAddDevice() {
 
@@ -43,7 +46,9 @@ public class FragmentAddDevice extends Fragment {
         DEFAULT_COLOR = 13224393;//Color.parseColor(String.valueOf(getResources().getColor(R.color.colorBlack)));
         DEFAULT_EFFECT = "FX_MODE_STATIC";
         DEFAULT_MORE_EFFECT = false;
-
+        DEFAULT_BULB_STATUS = 0;
+        DEFAULT_SPEED = 0;
+        DEFAULT_BRIGHTNESS = 0;
     }
 
     @Nullable
@@ -91,13 +96,13 @@ public class FragmentAddDevice extends Fragment {
 
                     if (deviceType.equals(getString(R.string.str_device_name_lamp))) {
                         dataBase = new DeviceDataBase(getContext(), DeviceType.NOTHING);
-                        id = dataBase.insertLightBulbInfo(id, 0);
+                        id = dataBase.insertLightBulbInfo(id, DEFAULT_BULB_STATUS);
 
                         Toast.makeText(getContext(), "detail:" + id, Toast.LENGTH_SHORT).show();
                     } else if (deviceType.equals(getString(R.string.str_device_name_led_stripe))) {
                         dataBase = new DeviceDataBase(getContext(), DeviceType.LED_STRIP);
                         id = dataBase.insertLedDeviceInfo(id, DEFAULT_COLOR, DEFAULT_EFFECT,
-                                String.valueOf(DEFAULT_MORE_EFFECT));
+                                DEFAULT_SPEED, DEFAULT_BRIGHTNESS);
 
                         Toast.makeText(getContext(), "detail:" + id, Toast.LENGTH_SHORT).show();
                     }

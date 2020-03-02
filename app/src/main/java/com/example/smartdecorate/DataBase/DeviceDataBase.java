@@ -3,6 +3,7 @@ package com.example.smartdecorate.DataBase;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -38,13 +39,15 @@ public class DeviceDataBase extends SQLiteOpenHelper {
     private static final String COLUMN_LED_EFFECTS_TABLE_ID = "id";
     private static final String COLUMN_LED_EFFECTS_TABLE_COLOR = "color";
     private static final String COLUMN_LED_EFFECTS_TABLE_EFFECT = "effect";
-    private static final String COLUMN_LED_EFFECTS_TABLE_MORE = "moreEffect";
+    private static final String COLUMN_LED_EFFECTS_TABLE_SPEED = "speed";
+    private static final String COLUMN_LED_EFFECTS_TABLE_BRIGHTNESS = "brightness";
 
     private static final String CREATE_LED_EFFECTS_TABLE_QUERY = "CREATE TABLE IF NOT EXISTS " + LED_EFFECTS_TABLE + "( " +
             COLUMN_LED_EFFECTS_TABLE_ID + " INTEGER, " +
             COLUMN_LED_EFFECTS_TABLE_COLOR + " INTEGER, " +
             COLUMN_LED_EFFECTS_TABLE_EFFECT + " TEXT, " +
-            COLUMN_LED_EFFECTS_TABLE_MORE + " TEXT " +
+            COLUMN_LED_EFFECTS_TABLE_SPEED + " INTEGER, " +
+            COLUMN_LED_EFFECTS_TABLE_BRIGHTNESS + " INTEGER " +
             ");";
 
     /* CATEGORY TABLE */
@@ -71,8 +74,8 @@ public class DeviceDataBase extends SQLiteOpenHelper {
 
         String query = "SELECT * FROM " + DEVICE_TABLE +
                 " INNER JOIN " + LED_EFFECTS_TABLE + " ON " +
-                "tbl_device.id == tbl_ledEffects.id" +
-                " WHERE tbl_device.type == \"نوار LED\"";
+                "tlb_device.id == tlb_ledEffects.id" +
+                " WHERE tlb_device.device_type == \"نوار LED\"";
 
         return sqLiteDatabase.rawQuery(query, null);
     }
@@ -82,9 +85,9 @@ public class DeviceDataBase extends SQLiteOpenHelper {
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
 
         String query = "SELECT * FROM " + DEVICE_TABLE +
-                " INNER JOIN " + LED_EFFECTS_TABLE + " ON " +
-                "tbl_device.id == tbl_lightBulb.id" +
-                " WHERE tbl_device.type == \"لامپ روشنایی\"";
+                " INNER JOIN " + LIGHT_BULB_TABLE + " ON " +
+                "tlb_device.id == tlb_lightBulb.id" +
+                " WHERE tlb_device.device_type == \"لامپ روشنایی\"";
 
         return sqLiteDatabase.rawQuery(query, null);
     }
@@ -141,14 +144,15 @@ public class DeviceDataBase extends SQLiteOpenHelper {
         return cursor;
     }
 
-    public long insertLedDeviceInfo(long id, int color, String effect, String moreEffect) {
+    public long insertLedDeviceInfo(long id, int color, String effect, int speed, int brightness) {
 
         ContentValues contentValues = new ContentValues();
 
         contentValues.put(COLUMN_LED_EFFECTS_TABLE_ID, id);
         contentValues.put(COLUMN_LED_EFFECTS_TABLE_COLOR, color);
         contentValues.put(COLUMN_LED_EFFECTS_TABLE_EFFECT, effect);
-        contentValues.put(COLUMN_LED_EFFECTS_TABLE_MORE, moreEffect);
+        contentValues.put(COLUMN_LED_EFFECTS_TABLE_SPEED, speed);
+        contentValues.put(COLUMN_LED_EFFECTS_TABLE_BRIGHTNESS, brightness);
 
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
 
@@ -167,14 +171,15 @@ public class DeviceDataBase extends SQLiteOpenHelper {
         return sqLiteDatabase.insert(LIGHT_BULB_TABLE, null, contentValues);
     }
 
-    public long updateLedDeviceInfo(long id, int color, String effect, String moreEffect) {
+    public long updateLedDeviceInfo(long id, int color, String effect, int speed, int brightness) {
 
         ContentValues contentValues = new ContentValues();
 
         contentValues.put(COLUMN_LED_EFFECTS_TABLE_ID, id);
         contentValues.put(COLUMN_LED_EFFECTS_TABLE_COLOR, color);
         contentValues.put(COLUMN_LED_EFFECTS_TABLE_EFFECT, effect);
-        contentValues.put(COLUMN_LED_EFFECTS_TABLE_MORE, moreEffect);
+        contentValues.put(COLUMN_LED_EFFECTS_TABLE_SPEED, speed);
+        contentValues.put(COLUMN_LED_EFFECTS_TABLE_BRIGHTNESS, brightness);
 
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
 
@@ -195,11 +200,11 @@ public class DeviceDataBase extends SQLiteOpenHelper {
 
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
 
-        return sqLiteDatabase.rawQuery("SELECT * FROM " + LED_EFFECTS_TABLE, null);
+//        return sqLiteDatabase.rawQuery("SELECT * FROM " + LED_EFFECTS_TABLE, null);
 
-//        return sqLiteDatabase.rawQuery("SELECT * FROM " + LED_EFFECTS_TABLE +
-//
-//                " WHERE " + COLUMN_LED_EFFECTS_TABLE_ID + " = ?", new String[]{id});
+        return sqLiteDatabase.rawQuery("SELECT * FROM " + LED_EFFECTS_TABLE +
+
+                " WHERE " + COLUMN_LED_EFFECTS_TABLE_ID + " = ?", new String[]{id});
     }
 
     public long insertCategoryInfo(String id, String title) {
@@ -219,5 +224,16 @@ public class DeviceDataBase extends SQLiteOpenHelper {
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
 
         return sqLiteDatabase.rawQuery("SELECT * FROM " + CATEGORY_TABLE, null);
+    }
+
+    private long getSizeOfTable(String tableName) {
+
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+
+        //Cursor cursor = sqLiteDatabase.rawQuery("SELECT count(*) FROM " + tableName, null);
+
+        long size = DatabaseUtils.queryNumEntries(sqLiteDatabase, tableName);
+
+        return size;
     }
 }

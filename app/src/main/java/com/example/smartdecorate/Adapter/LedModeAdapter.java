@@ -35,7 +35,7 @@ public class LedModeAdapter extends RecyclerView.Adapter<LedModeAdapter.LedStrip
     }
 
     @Override
-    public void onBindViewHolder(@NonNull LedStripViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull LedStripViewHolder holder, final int position) {
 
         final String mode = modeList.get(position);
 
@@ -44,7 +44,7 @@ public class LedModeAdapter extends RecyclerView.Adapter<LedModeAdapter.LedStrip
         holder.parent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onEffectClickListener.OnEffectClick(mode);
+                onEffectClickListener.OnEffectClick(mode, position);
             }
         });
     }
@@ -68,7 +68,7 @@ public class LedModeAdapter extends RecyclerView.Adapter<LedModeAdapter.LedStrip
     }
 
     public interface OnEffectClickListener {
-        void OnEffectClick(String effect);
+        void OnEffectClick(String effect, int position);
     }
 
     public void setOnEffectClickListener(OnEffectClickListener onEffectClickListener) {
