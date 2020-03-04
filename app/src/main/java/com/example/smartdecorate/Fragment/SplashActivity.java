@@ -1,6 +1,7 @@
-package com.example.smartdecorate;
+package com.example.smartdecorate.Fragment;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -21,9 +22,14 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.smartdecorate.DataBase.DeviceDataBase;
 import com.example.smartdecorate.ENUM.DeviceType;
+import com.example.smartdecorate.Fragment.FragmentAddDevice;
+import com.example.smartdecorate.Fragment.FragmentCategory;
+import com.example.smartdecorate.Fragment.FragmentDeviceList;
+import com.example.smartdecorate.Fragment.FragmentLedStripInfo;
 import com.example.smartdecorate.Fragment.FragmentLogin;
 import com.example.smartdecorate.Fragment.FragmentMainPage;
 import com.example.smartdecorate.Model.CategoryModel;
+import com.example.smartdecorate.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,6 +44,7 @@ public class SplashActivity extends AppCompatActivity {
 
     ImageView imgLogo;
     FrameLayout frameLayout;
+    FragmentManager fragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +68,7 @@ public class SplashActivity extends AppCompatActivity {
                 timer.purge();
                 timer.cancel();
 
-                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager = getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
 
@@ -92,5 +99,41 @@ public class SplashActivity extends AppCompatActivity {
         alphaAnimation.setFillAfter(true);
 
         imgLogo.setAnimation(alphaAnimation);
+    }
+
+    @Override
+    public void onBackPressed() {
+
+
+        int count = getSupportFragmentManager().getBackStackEntryCount();
+
+        Toast.makeText(this, "" + count, Toast.LENGTH_SHORT).show();
+
+        if (count == 0) {
+            super.onBackPressed();
+        } else {
+            getSupportFragmentManager().popBackStack();
+        }
+
+
+//        Fragment fragment = fragmentManager.findFragmentById(R.id.frm_splash_frame);
+//
+//        if (fragment instanceof FragmentMainPage) {
+//            Toast.makeText(this, "mainpage", Toast.LENGTH_SHORT).show();
+//
+////            FragmentTransaction removeTransaction = fragmentManager.beginTransaction().remove().commit();
+//
+//        } else if (fragment instanceof FragmentDeviceList) {
+//
+//            Toast.makeText(this, "devicelist", Toast.LENGTH_SHORT).show();
+////            fragmentManager.beginTransaction().replace(R.id.frm_splash_frame, fragment).commit();
+//
+//        } else if (fragment instanceof FragmentAddDevice) {
+//            Toast.makeText(this, "adddevice", Toast.LENGTH_SHORT).show();
+//        } else if (fragment instanceof FragmentCategory) {
+//            Toast.makeText(this, "category", Toast.LENGTH_SHORT).show();
+//        } else if (fragment instanceof FragmentLedStripInfo) {
+//            Toast.makeText(this, "ledInfo", Toast.LENGTH_SHORT).show();
+//        }
     }
 }

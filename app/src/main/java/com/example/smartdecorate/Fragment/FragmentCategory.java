@@ -203,6 +203,7 @@ public class FragmentCategory extends Fragment {
                 FragmentTransaction addTransaction = fragmentManager.beginTransaction();
                 removeTransaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
                 addTransaction.add(R.id.frm_splash_frame, fragmentLedStripInfo);
+                addTransaction.addToBackStack(null);
                 addTransaction.commit();
             }
         });

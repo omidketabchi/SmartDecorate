@@ -27,7 +27,6 @@ import com.example.smartdecorate.DataBase.DeviceDataBase;
 import com.example.smartdecorate.ENUM.DeviceType;
 import com.example.smartdecorate.Model.MainMenuItemModel;
 import com.example.smartdecorate.R;
-import com.example.smartdecorate.SplashActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -133,6 +132,7 @@ public class FragmentMainPage extends Fragment {
             FragmentTransaction transaction = manager.beginTransaction();
             transaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
             transaction.add(R.id.frm_splash_frame, new FragmentAddDevice());
+            transaction.addToBackStack(null);
             transaction.commit();
 
         } else if (title.equals(getString(R.string.str_devices_list))) {
@@ -141,6 +141,7 @@ public class FragmentMainPage extends Fragment {
             FragmentTransaction transaction = manager.beginTransaction();
             transaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
             transaction.add(R.id.frm_splash_frame, new FragmentDeviceList());
+            transaction.addToBackStack(null);
             transaction.commit();
 
         } else if (title.equals(getString(R.string.str_category))) {
@@ -149,6 +150,7 @@ public class FragmentMainPage extends Fragment {
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
             transaction.add(R.id.frm_splash_frame, new FragmentCategory());
+            transaction.addToBackStack(null);
             transaction.commit();
         }
     }
