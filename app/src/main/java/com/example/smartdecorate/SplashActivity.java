@@ -1,4 +1,4 @@
-package com.example.smartdecorate.Fragment;
+package com.example.smartdecorate;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
