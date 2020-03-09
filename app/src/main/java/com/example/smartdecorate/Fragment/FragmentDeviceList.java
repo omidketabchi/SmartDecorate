@@ -130,6 +130,16 @@ public class FragmentDeviceList extends Fragment {
                     transaction.addToBackStack(null);
                     transaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
                     transaction.commit();
+                } else if (model.getDeviceType().equals(getString(R.string.str_device_name_parking_door))) {
+
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable("model", model);
+                    FragmentParkingDoor fragmentParkingDoor = new FragmentParkingDoor();
+                    fragmentParkingDoor.setArguments(bundle);
+
+                    fragmentParkingDoor.show(((AppCompatActivity)getContext()).getSupportFragmentManager(), null);
+
+
                 } else {
                     Toast.makeText(getContext(), model.getDeviceType(), Toast.LENGTH_SHORT).show();
                 }

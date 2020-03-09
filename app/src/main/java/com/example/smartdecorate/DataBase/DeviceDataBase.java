@@ -7,6 +7,7 @@ import android.database.DatabaseUtils;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.text.method.NumberKeyListener;
 
 import androidx.annotation.Nullable;
 
@@ -86,6 +87,19 @@ public class DeviceDataBase extends SQLiteOpenHelper {
             COLUMN_WATER_VALVE_TABLE_PERIOD + " TEXT, " +
             COLUMN_WATER_VALVE_TABLE_INTENSITY + " INTEGER " + ");";
 
+
+    /* PARKING DOOR */
+    private static final String PARKING_DOOR_TABLE = "tlb_parking_door";
+    private static final String COLUMN_PARKING_DOOR_TABLE_ID = "id";
+    private static final String COLUMN_PARKING_DOOR_TABLE_FIRST_DOOR = "first_door";
+    private static final String COLUMN_PARKING_DOOR_TABLE_BOTH_OF_THEM = "both_of_them";
+
+    private static final String CREATE_PARKING_DOOR_TABLE_QUERY = "CREATE TABLE IF NOT EXISTS "
+            + PARKING_DOOR_TABLE + " (" +
+            COLUMN_PARKING_DOOR_TABLE_ID + " INTEGER, " +
+            COLUMN_PARKING_DOOR_TABLE_FIRST_DOOR + " INTEGER, " +
+            COLUMN_PARKING_DOOR_TABLE_BOTH_OF_THEM + " INTEGER " + ");";
+
     public Cursor getLedStripItems() {
 
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
@@ -125,6 +139,7 @@ public class DeviceDataBase extends SQLiteOpenHelper {
             db.execSQL(CREATE_CATEGORY_TABLE_QUERY);
             db.execSQL(CREATE_LIGHT_BULB_TABLE_QUERY);
             db.execSQL(CREATE_WATER_VALVE_TABLE_QUERY);
+            db.execSQL(CREATE_PARKING_DOOR_TABLE_QUERY);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -330,5 +345,18 @@ public class DeviceDataBase extends SQLiteOpenHelper {
                 " WHERE tlb_device.device_type == \"شیر آب\"";
 
         return sqLiteDatabase.rawQuery(query, null);
+    }
+
+    public long insertParkingInfo(int id, int firstDoor, int bothOfThem) {
+
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(COLUMN_PARKING_DOOR_TABLE_ID, id);
+        contentValues.put(COLUMN_PARKING_DOOR_TABLE_FIRST_DOOR, firstDoor);
+        contentValues.put(COLUMN_PARKING_DOOR_TABLE_BOTH_OF_THEM, bothOfThem);
+
+        return sqLiteDatabase.insert(PARKING_DOOR_TABLE, null, contentValues);
     }
 }

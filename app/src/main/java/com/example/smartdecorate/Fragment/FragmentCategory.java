@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smartdecorate.Adapter.LedStripAdapter;
 import com.example.smartdecorate.Adapter.LightBulbAdapter;
+import com.example.smartdecorate.Adapter.ParkingDoorAdapter;
 import com.example.smartdecorate.Adapter.WaterValveAdapter;
 import com.example.smartdecorate.Connection.Connection;
 import com.example.smartdecorate.DataBase.DeviceDataBase;
@@ -27,6 +28,7 @@ import com.example.smartdecorate.Model.CategoryModel;
 import com.example.smartdecorate.Model.DeviceInfoModel;
 import com.example.smartdecorate.Model.LedDeviceInfoModel;
 import com.example.smartdecorate.Model.LightBulbModel;
+import com.example.smartdecorate.Model.ParkingDoorModel;
 import com.example.smartdecorate.Model.WaterValveModel;
 import com.example.smartdecorate.R;
 
@@ -38,19 +40,27 @@ public class FragmentCategory extends Fragment {
     View view;
     TextView txtTitle;
     ImageView imgBack;
+
     RecyclerView recyclerView1;
     RecyclerView recyclerView2;
     RecyclerView recyclerView3;
-    List<CategoryModel> categoryModels;
+    RecyclerView recyclerView4;
+
     TextView txtList1;
     TextView txtList2;
     TextView txtList3;
+    TextView txtList4;
+
+    List<CategoryModel>   categoryModels;
+    List<LightBulbModel>  lightBulbModels;
     List<DeviceInfoModel> deviceInfoModels1;
     List<DeviceInfoModel> deviceInfoModels2;
     List<DeviceInfoModel> deviceInfoModels3;
-    List<LightBulbModel> lightBulbModels;
-    List<LedDeviceInfoModel> ledDeviceInfoModels;
+    List<DeviceInfoModel> deviceInfoModels4;
     List<WaterValveModel> waterValveModels;
+    List<ParkingDoorModel> parkingDoorModels;
+    List<LedDeviceInfoModel> ledDeviceInfoModels;
+
     FragmentManager fragmentManager;
 
     @Nullable
@@ -94,6 +104,7 @@ public class FragmentCategory extends Fragment {
         txtList1.setText(categoryModels.get(0).getTitle());
         txtList2.setText(categoryModels.get(1).getTitle());
         txtList3.setText(categoryModels.get(4).getTitle());
+        txtList4.setText(categoryModels.get(4).getTitle());
     }
 
     private void setupViews() {
@@ -101,10 +112,13 @@ public class FragmentCategory extends Fragment {
         deviceInfoModels1 = new ArrayList<>();
         deviceInfoModels2 = new ArrayList<>();
         deviceInfoModels3 = new ArrayList<>();
+        deviceInfoModels4 = new ArrayList<>();
+
         categoryModels = new ArrayList<>();
         lightBulbModels = new ArrayList<>();
         ledDeviceInfoModels = new ArrayList<>();
         waterValveModels = new ArrayList<>();
+        parkingDoorModels = new ArrayList<>();
 
         fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
 
@@ -123,6 +137,8 @@ public class FragmentCategory extends Fragment {
         recyclerView3 = (RecyclerView) view.findViewById(R.id.rv_fragmentCategory_list3);
         recyclerView3.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
+        recyclerView4 = (RecyclerView) view.findViewById(R.id.rv_fragmentCategory_list4);
+        recyclerView4.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
         txtTitle.setText("دسته بندی ها");
 
@@ -268,6 +284,47 @@ public class FragmentCategory extends Fragment {
                 addTransaction.replace(R.id.frm_splash_frame, fragmentValveInfo);
                 addTransaction.addToBackStack(null);
                 addTransaction.commit();
+            }
+        });
+
+        cursor = null;
+
+        cursor = dataBase.getWaterValveItems();
+
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+
+            DeviceInfoModel deviceInfoModel = new DeviceInfoModel();
+            WaterValveModel waterValveModel = new WaterValveModel();
+
+            deviceInfoModel.setId(String.valueOf(cursor.getInt(0)));
+            deviceInfoModel.setDeviceName(cursor.getString(1));
+            deviceInfoModel.setDeviceIp(cursor.getString(2));
+            deviceInfoModel.setDeviceType(cursor.getString(3));
+
+            waterValveModel.setId(cursor.getInt(4));
+            waterValveModel.setActiveNow(cursor.getInt(5));
+            waterValveModel.setFrom(cursor.getString(6));
+            waterValveModel.setUntil(cursor.getString(7));
+            waterValveModel.setIntensity(cursor.getInt(8));
+
+            deviceInfoModels3.add(deviceInfoModel);
+            waterValveModels.add(waterValveModel);
+        }
+
+        ParkingDoorAdapter parkingDoorAdapter = new ParkingDoorAdapter(getContext(), deviceInfoModels4, parkingDoorModels);
+
+        recyclerView4.setAdapter(parkingDoorAdapter);
+
+        parkingDoorAdapter.setOnItemListClickListener(new ParkingDoorAdapter.OnItemListClickListener() {
+            @Override
+            public void onItemClick(DeviceInfoModel deviceInfoModel) {
+
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("model", deviceInfoModel);
+                FragmentParkingDoor fragmentParkingDoor = new FragmentParkingDoor();
+                fragmentParkingDoor.setArguments(bundle);
+
+                fragmentParkingDoor.show(((AppCompatActivity)getContext()).getSupportFragmentManager(), null);
             }
         });
     }

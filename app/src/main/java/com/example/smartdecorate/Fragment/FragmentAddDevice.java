@@ -42,6 +42,8 @@ public class FragmentAddDevice extends Fragment {
     private final String DEFAULT_DATE_TIME;
     private final int DEFAULT_INTENSITY;
     private final String DEFAULT_PERIOD;
+    private final int DEFAULT_FIRST_DOOR;
+    private final int DEFAULT_BOTH_OF_THEM;
 
     public FragmentAddDevice() {
 
@@ -58,6 +60,9 @@ public class FragmentAddDevice extends Fragment {
         DEFAULT_DATE_TIME = "تاریخ/زمان";
         DEFAULT_INTENSITY = 50;
         DEFAULT_PERIOD = "یک روز در هفته";
+
+        DEFAULT_BOTH_OF_THEM = 1;
+        DEFAULT_FIRST_DOOR = 0;
     }
 
     @Nullable
@@ -120,6 +125,11 @@ public class FragmentAddDevice extends Fragment {
                                 DEFAULT_DATE_TIME, DEFAULT_PERIOD, DEFAULT_INTENSITY);
 
                         Toast.makeText(getContext(), "detail:" + id, Toast.LENGTH_SHORT).show();
+                    } else if (deviceType.equals(getString(R.string.str_device_name_parking_door))) {
+                        dataBase = new DeviceDataBase(getContext(), DeviceType.NOTHING);
+                        id = dataBase.insertParkingInfo((int) id, DEFAULT_FIRST_DOOR, DEFAULT_BOTH_OF_THEM);
+
+                        Toast.makeText(getContext(), "detail:" + id, Toast.LENGTH_SHORT).show();
                     }
 
                     FragmentManager fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
@@ -149,6 +159,5 @@ public class FragmentAddDevice extends Fragment {
 
         spinner.setAdapter(adapter);
         spinner.setHapticFeedbackEnabled(true);
-
     }
 }
