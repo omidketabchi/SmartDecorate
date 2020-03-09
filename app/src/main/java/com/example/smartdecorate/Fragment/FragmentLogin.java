@@ -136,7 +136,7 @@ public class FragmentLogin extends Fragment {
                     fragmentVerificationCode.setArguments(bundle);
 
                     addTransaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
-                    addTransaction.add(R.id.frm_splash_frame, fragmentVerificationCode);
+                    addTransaction.replace(R.id.frm_splash_frame, fragmentVerificationCode);
                     addTransaction.commit();
                 }
             }

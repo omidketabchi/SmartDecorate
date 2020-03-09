@@ -1,7 +1,6 @@
 package com.example.smartdecorate.Fragment;
 
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,6 +38,10 @@ public class FragmentAddDevice extends Fragment {
     private final int DEFAULT_BULB_STATUS;
     private final int DEFAULT_SPEED;
     private final int DEFAULT_BRIGHTNESS;
+    private final int DEFAULT_ACTIVE_NOW;
+    private final String DEFAULT_DATE_TIME;
+    private final int DEFAULT_INTENSITY;
+    private final String DEFAULT_PERIOD;
 
     public FragmentAddDevice() {
 
@@ -49,6 +52,12 @@ public class FragmentAddDevice extends Fragment {
         DEFAULT_BULB_STATUS = 0;
         DEFAULT_SPEED = 0;
         DEFAULT_BRIGHTNESS = 0;
+
+        DEFAULT_ACTIVE_NOW = 0;
+//        DEFAULT_DATE_TIME = getString(R.string.str_default_date_time);
+        DEFAULT_DATE_TIME = "تاریخ/زمان";
+        DEFAULT_INTENSITY = 50;
+        DEFAULT_PERIOD = "یک روز در هفته";
     }
 
     @Nullable
@@ -103,6 +112,12 @@ public class FragmentAddDevice extends Fragment {
                         dataBase = new DeviceDataBase(getContext(), DeviceType.LED_STRIP);
                         id = dataBase.insertLedDeviceInfo(id, DEFAULT_COLOR, DEFAULT_EFFECT,
                                 DEFAULT_SPEED, DEFAULT_BRIGHTNESS);
+
+                        Toast.makeText(getContext(), "detail:" + id, Toast.LENGTH_SHORT).show();
+                    } else if (deviceType.equals(getString(R.string.str_device_name_water_valve))) {
+                        dataBase = new DeviceDataBase(getContext(), DeviceType.NOTHING);
+                        id = dataBase.insertWaterValveInfo((int) id, DEFAULT_ACTIVE_NOW, DEFAULT_DATE_TIME,
+                                DEFAULT_DATE_TIME, DEFAULT_PERIOD, DEFAULT_INTENSITY);
 
                         Toast.makeText(getContext(), "detail:" + id, Toast.LENGTH_SHORT).show();
                     }

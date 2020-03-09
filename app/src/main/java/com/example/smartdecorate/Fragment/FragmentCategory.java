@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smartdecorate.Adapter.LedStripAdapter;
 import com.example.smartdecorate.Adapter.LightBulbAdapter;
+import com.example.smartdecorate.Adapter.WaterValveAdapter;
 import com.example.smartdecorate.Connection.Connection;
 import com.example.smartdecorate.DataBase.DeviceDataBase;
 import com.example.smartdecorate.ENUM.DeviceType;
@@ -26,6 +27,7 @@ import com.example.smartdecorate.Model.CategoryModel;
 import com.example.smartdecorate.Model.DeviceInfoModel;
 import com.example.smartdecorate.Model.LedDeviceInfoModel;
 import com.example.smartdecorate.Model.LightBulbModel;
+import com.example.smartdecorate.Model.WaterValveModel;
 import com.example.smartdecorate.R;
 
 import java.util.ArrayList;
@@ -38,13 +40,17 @@ public class FragmentCategory extends Fragment {
     ImageView imgBack;
     RecyclerView recyclerView1;
     RecyclerView recyclerView2;
+    RecyclerView recyclerView3;
     List<CategoryModel> categoryModels;
     TextView txtList1;
     TextView txtList2;
+    TextView txtList3;
     List<DeviceInfoModel> deviceInfoModels1;
     List<DeviceInfoModel> deviceInfoModels2;
+    List<DeviceInfoModel> deviceInfoModels3;
     List<LightBulbModel> lightBulbModels;
     List<LedDeviceInfoModel> ledDeviceInfoModels;
+    List<WaterValveModel> waterValveModels;
     FragmentManager fragmentManager;
 
     @Nullable
@@ -87,15 +93,18 @@ public class FragmentCategory extends Fragment {
 
         txtList1.setText(categoryModels.get(0).getTitle());
         txtList2.setText(categoryModels.get(1).getTitle());
+        txtList3.setText(categoryModels.get(4).getTitle());
     }
 
     private void setupViews() {
 
         deviceInfoModels1 = new ArrayList<>();
         deviceInfoModels2 = new ArrayList<>();
+        deviceInfoModels3 = new ArrayList<>();
         categoryModels = new ArrayList<>();
         lightBulbModels = new ArrayList<>();
         ledDeviceInfoModels = new ArrayList<>();
+        waterValveModels = new ArrayList<>();
 
         fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
 
@@ -103,12 +112,17 @@ public class FragmentCategory extends Fragment {
         imgBack = (ImageView) view.findViewById(R.id.img_main_back);
         txtList1 = (TextView) view.findViewById(R.id.txt_fragmentCategory_list1);
         txtList2 = (TextView) view.findViewById(R.id.txt_fragmentCategory_list2);
+        txtList3 = (TextView) view.findViewById(R.id.txt_fragmentCategory_list3);
 
         recyclerView1 = (RecyclerView) view.findViewById(R.id.rv_fragmentCategory_list1);
         recyclerView1.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
         recyclerView2 = (RecyclerView) view.findViewById(R.id.rv_fragmentCategory_list2);
         recyclerView2.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+
+        recyclerView3 = (RecyclerView) view.findViewById(R.id.rv_fragmentCategory_list3);
+        recyclerView3.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+
 
         txtTitle.setText("دسته بندی ها");
 
@@ -202,7 +216,56 @@ public class FragmentCategory extends Fragment {
                 fragmentLedStripInfo.setArguments(bundle);
                 FragmentTransaction addTransaction = fragmentManager.beginTransaction();
                 removeTransaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
-                addTransaction.add(R.id.frm_splash_frame, fragmentLedStripInfo);
+                addTransaction.replace(R.id.frm_splash_frame, fragmentLedStripInfo);
+                addTransaction.addToBackStack(null);
+                addTransaction.commit();
+            }
+        });
+
+        cursor = null;
+
+        cursor = dataBase.getWaterValveItems();
+
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+
+            DeviceInfoModel deviceInfoModel = new DeviceInfoModel();
+            WaterValveModel waterValveModel = new WaterValveModel();
+
+            deviceInfoModel.setId(String.valueOf(cursor.getInt(0)));
+            deviceInfoModel.setDeviceName(cursor.getString(1));
+            deviceInfoModel.setDeviceIp(cursor.getString(2));
+            deviceInfoModel.setDeviceType(cursor.getString(3));
+
+            waterValveModel.setId(cursor.getInt(4));
+            waterValveModel.setActiveNow(cursor.getInt(5));
+            waterValveModel.setFrom(cursor.getString(6));
+            waterValveModel.setUntil(cursor.getString(7));
+            waterValveModel.setIntensity(cursor.getInt(8));
+
+            deviceInfoModels3.add(deviceInfoModel);
+            waterValveModels.add(waterValveModel);
+        }
+
+        WaterValveAdapter waterValveAdapter = new WaterValveAdapter(getContext(), deviceInfoModels3, waterValveModels);
+
+        recyclerView3.setAdapter(waterValveAdapter);
+
+        waterValveAdapter.setOnItemListClickListener(new WaterValveAdapter.OnItemListClickListener() {
+            @Override
+            public void onItemClick(DeviceInfoModel deviceInfoModel, int status) {
+
+                FragmentTransaction removeTransaction = fragmentManager.beginTransaction();
+                removeTransaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
+                removeTransaction.remove(FragmentCategory.this);
+                removeTransaction.commit();
+
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("model", deviceInfoModel);
+                FragmentValveInfo fragmentValveInfo = new FragmentValveInfo();
+                fragmentValveInfo.setArguments(bundle);
+                FragmentTransaction addTransaction = fragmentManager.beginTransaction();
+                removeTransaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
+                addTransaction.replace(R.id.frm_splash_frame, fragmentValveInfo);
                 addTransaction.addToBackStack(null);
                 addTransaction.commit();
             }

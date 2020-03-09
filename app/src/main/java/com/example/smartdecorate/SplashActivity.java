@@ -73,12 +73,14 @@ public class SplashActivity extends AppCompatActivity {
                 transaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
 
                 if (!phone.isEmpty()) {
-                    transaction.add(R.id.frm_splash_frame, new FragmentMainPage());
+                    transaction.replace(R.id.frm_splash_frame, new FragmentMainPage());
                 } else {
-                    transaction.add(R.id.frm_splash_frame, new FragmentLogin());
+                    transaction.replace(R.id.frm_splash_frame, new FragmentLogin());
                 }
 
                 transaction.commit();
+//                finish();
+
             }
         }, 3000, 1);
     }
@@ -103,7 +105,6 @@ public class SplashActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-
 
         int count = getSupportFragmentManager().getBackStackEntryCount();
 

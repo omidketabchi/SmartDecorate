@@ -1,68 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorWhite"
-    android:orientation="vertical">
+    android:background="@color/colorWhite">
 
-    <include layout="@layout/toolbar_layout" />
-
-    <androidx.cardview.widget.CardView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:elevation="16dp">
+        android:orientation="vertical">
 
-        <LinearLayout
+        <include layout="@layout/toolbar_layout" />
+
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="8dp">
+            android:layout_margin="8dp"
+            android:elevation="16dp">
 
-            <TextView
-                android:id="@+id/txt_fragmentCategory_list1"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="4dp"
-                android:text="گروه1"
-                android:textSize="16sp" />
+                android:orientation="vertical"
+                android:padding="8dp">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_fragmentCategory_list1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layoutDirection="rtl" />
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/txt_fragmentCategory_list1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="4dp"
+                    android:textSize="16sp"
+                    tools:text="گروه1" />
 
-    </androidx.cardview.widget.CardView>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_fragmentCategory_list1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layoutDirection="rtl" />
+            </LinearLayout>
 
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:elevation="16dp">
+        </androidx.cardview.widget.CardView>
 
-        <LinearLayout
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="8dp">
+            android:layout_margin="8dp"
+            android:elevation="16dp">
 
-            <TextView
-                android:id="@+id/txt_fragmentCategory_list2"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="4dp"
-                android:text="گروه2"
-                android:textSize="16sp" />
+                android:orientation="vertical"
+                android:padding="8dp">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_fragmentCategory_list2"
+                <TextView
+                    android:id="@+id/txt_fragmentCategory_list2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="4dp"
+                    android:textSize="16sp"
+                    tools:text="گروه2" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_fragmentCategory_list2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layoutDirection="rtl" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:elevation="16dp">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layoutDirection="rtl" />
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
+                android:orientation="vertical"
+                android:padding="8dp">
 
-</LinearLayout>
+                <TextView
+                    android:id="@+id/txt_fragmentCategory_list3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="4dp"
+                    android:textSize="16sp"
+                    tools:text="گروه3" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_fragmentCategory_list3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layoutDirection="rtl" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+
+</ScrollView>

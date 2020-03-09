@@ -68,6 +68,24 @@ public class DeviceDataBase extends SQLiteOpenHelper {
             COLUMN_LIGHT_BULB_TABLE_ID + " INTEGER, " +
             COLUMN_LIGHT_BULB_TABLE_STATUS + " INTEGER " + ");";
 
+    /* WATER VALVE */
+    private static final String WATER_VALVE_TABLE = "tlb_water_valve";
+    private static final String COLUMN_WATER_VALVE_TABLE_ID = "id";
+    private static final String COLUMN_WATER_VALVE_TABLE_ACTIVE_NOW = "active_now";
+    private static final String COLUMN_WATER_VALVE_TABLE_FROM = "_from"; // because "from" is a key word.
+    private static final String COLUMN_WATER_VALVE_TABLE_UNTIL = "until";
+    private static final String COLUMN_WATER_VALVE_TABLE_PERIOD = "period";
+    private static final String COLUMN_WATER_VALVE_TABLE_INTENSITY = "intensity";
+
+    private static final String CREATE_WATER_VALVE_TABLE_QUERY = "CREATE TABLE IF NOT EXISTS "
+            + WATER_VALVE_TABLE + " (" +
+            COLUMN_WATER_VALVE_TABLE_ID + " INTEGER, " +
+            COLUMN_WATER_VALVE_TABLE_ACTIVE_NOW + " INTEGER, " +
+            COLUMN_WATER_VALVE_TABLE_FROM + " TEXT, " +
+            COLUMN_WATER_VALVE_TABLE_UNTIL + " TEXT, " +
+            COLUMN_WATER_VALVE_TABLE_PERIOD + " TEXT, " +
+            COLUMN_WATER_VALVE_TABLE_INTENSITY + " INTEGER " + ");";
+
     public Cursor getLedStripItems() {
 
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
@@ -106,6 +124,7 @@ public class DeviceDataBase extends SQLiteOpenHelper {
             db.execSQL(CREATE_LED_EFFECTS_TABLE_QUERY);
             db.execSQL(CREATE_CATEGORY_TABLE_QUERY);
             db.execSQL(CREATE_LIGHT_BULB_TABLE_QUERY);
+            db.execSQL(CREATE_WATER_VALVE_TABLE_QUERY);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -235,5 +254,81 @@ public class DeviceDataBase extends SQLiteOpenHelper {
         long size = DatabaseUtils.queryNumEntries(sqLiteDatabase, tableName);
 
         return size;
+    }
+
+    public boolean isExistThisId(DeviceType deviceType, int id) {
+
+        Cursor cursor;
+
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+
+        if (deviceType == DeviceType.WATER_VALVE) {
+            cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + WATER_VALVE_TABLE + " WHERE " + "id = ? ",
+                    new String[]{String.valueOf(id)});
+
+            cursor.moveToFirst();
+
+            if (cursor.getInt(0) != id) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public long insertWaterValveInfo(int id, int activeNow, String from, String until, String period, int intensity) {
+
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(COLUMN_WATER_VALVE_TABLE_ID, id);
+        contentValues.put(COLUMN_WATER_VALVE_TABLE_ACTIVE_NOW, activeNow);
+        contentValues.put(COLUMN_WATER_VALVE_TABLE_FROM, from);
+        contentValues.put(COLUMN_WATER_VALVE_TABLE_UNTIL, until);
+        contentValues.put(COLUMN_WATER_VALVE_TABLE_PERIOD, period);
+        contentValues.put(COLUMN_WATER_VALVE_TABLE_INTENSITY, intensity);
+
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+
+        return sqLiteDatabase.insert(WATER_VALVE_TABLE, null, contentValues);
+    }
+
+    public long updateWaterValveInfo(int id, int activeNow, String from, String until, String period, int intensity) {
+
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(COLUMN_WATER_VALVE_TABLE_ID, id);
+        contentValues.put(COLUMN_WATER_VALVE_TABLE_ACTIVE_NOW, activeNow);
+        contentValues.put(COLUMN_WATER_VALVE_TABLE_FROM, from);
+        contentValues.put(COLUMN_WATER_VALVE_TABLE_UNTIL, until);
+        contentValues.put(COLUMN_WATER_VALVE_TABLE_PERIOD, period);
+        contentValues.put(COLUMN_WATER_VALVE_TABLE_INTENSITY, intensity);
+
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+
+        return sqLiteDatabase.update(WATER_VALVE_TABLE, contentValues,
+                COLUMN_WATER_VALVE_TABLE_ID + " = ? ",
+                new String[]{String.valueOf(id)});
+    }
+
+    public Cursor getWaterValveInfo(int id) {
+
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+
+        return sqLiteDatabase.rawQuery("SELECT * FROM " + WATER_VALVE_TABLE + " WHERE " + "id = ? ",
+                new String[]{String.valueOf(id)});
+    }
+
+    public Cursor getWaterValveItems() {
+
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+
+        String query = "SELECT * FROM " + DEVICE_TABLE +
+                " INNER JOIN " + WATER_VALVE_TABLE + " ON " +
+                "tlb_device.id == tlb_water_valve.id" +
+                " WHERE tlb_device.device_type == \"شیر آب\"";
+
+        return sqLiteDatabase.rawQuery(query, null);
     }
 }

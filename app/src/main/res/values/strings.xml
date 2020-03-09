@@ -9,5 +9,7 @@
     <string name="str_category">دسته بندی ها</string>
     <string name="str_devices_list">لیست دستگاه ها</string>
     <string name="str_add_new_device">افزودن دستگاه جدید</string>
+    <string name="str_device_name_water_valve">شیر آب</string>
+    <string name="str_default_date_time">تاریخ/زمان</string>
 
 </resources>

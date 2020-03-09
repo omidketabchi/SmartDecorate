@@ -34,6 +34,7 @@ public class FragmentDeviceList extends Fragment {
     TextView txtTitle;
     RecyclerView recyclerView;
     List<DeviceInfoModel> models;
+    FragmentManager fragmentManager;
 
     @Nullable
     @Override
@@ -55,6 +56,8 @@ public class FragmentDeviceList extends Fragment {
 
         models = new ArrayList<>();
 
+        fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
+
         imgBack = (ImageView) view.findViewById(R.id.img_main_back);
         txtTitle = (TextView) view.findViewById(R.id.txt_main_title);
         recyclerView = (RecyclerView) view.findViewById(R.id.rv_fragmentDeviceList_list);
@@ -66,7 +69,7 @@ public class FragmentDeviceList extends Fragment {
         imgBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentManager fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
+
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 transaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
                 transaction.remove(FragmentDeviceList.this);
@@ -109,9 +112,21 @@ public class FragmentDeviceList extends Fragment {
                     FragmentLedStripInfo fragmentLedStripInfo = new FragmentLedStripInfo();
                     fragmentLedStripInfo.setArguments(bundle);
 
-                    FragmentManager fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
                     FragmentTransaction transaction = fragmentManager.beginTransaction();
-                    transaction.add(R.id.frm_splash_frame, fragmentLedStripInfo);
+                    transaction.replace(R.id.frm_splash_frame, fragmentLedStripInfo);
+                    transaction.addToBackStack(null);
+                    transaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
+                    transaction.commit();
+
+                } else if (model.getDeviceType().equals(getString(R.string.str_device_name_water_valve))) {
+
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable("model", model);
+                    FragmentValveInfo fragmentValveInfo = new FragmentValveInfo();
+                    fragmentValveInfo.setArguments(bundle);
+
+                    FragmentTransaction transaction = fragmentManager.beginTransaction();
+                    transaction.replace(R.id.frm_splash_frame, fragmentValveInfo);
                     transaction.addToBackStack(null);
                     transaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
                     transaction.commit();

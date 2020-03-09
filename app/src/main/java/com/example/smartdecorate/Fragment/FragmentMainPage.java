@@ -41,6 +41,7 @@ public class FragmentMainPage extends Fragment {
     RecyclerView recyclerView;
     List<MainMenuItemModel> models;
     DeviceDataBase dataBase;
+    FragmentManager fragmentManager;
 
     @Nullable
     @Override
@@ -64,6 +65,7 @@ public class FragmentMainPage extends Fragment {
 
         models = new ArrayList<>();
 
+        fragmentManager = ((AppCompatActivity)getContext()).getSupportFragmentManager();
         dataBase = new DeviceDataBase(getContext(), DeviceType.NOTHING);
 
         recyclerView = view.findViewById(R.id.rv_fragmentMainPage_list);
@@ -128,35 +130,32 @@ public class FragmentMainPage extends Fragment {
 
         if (title.equals(getString(R.string.str_add_new_device))) {
 
-            FragmentManager manager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
-            FragmentTransaction transaction = manager.beginTransaction();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
-            transaction.add(R.id.frm_splash_frame, new FragmentAddDevice());
+            transaction.replace(R.id.frm_splash_frame, new FragmentAddDevice());
             transaction.addToBackStack(null);
             transaction.commit();
 
         } else if (title.equals(getString(R.string.str_devices_list))) {
 
-            FragmentManager manager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
-            FragmentTransaction transaction = manager.beginTransaction();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
-            transaction.add(R.id.frm_splash_frame, new FragmentDeviceList());
+            transaction.replace(R.id.frm_splash_frame, new FragmentDeviceList());
             transaction.addToBackStack(null);
             transaction.commit();
 
         } else if (title.equals(getString(R.string.str_category))) {
 
-            FragmentManager fragmentManager = ((AppCompatActivity)getContext()).getSupportFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.setCustomAnimations(R.anim.fade_in_animation, R.anim.fade_out_animation);
-            transaction.add(R.id.frm_splash_frame, new FragmentCategory());
+            transaction.replace(R.id.frm_splash_frame, new FragmentCategory());
             transaction.addToBackStack(null);
             transaction.commit();
         }
     }
 
     private void getCategoryFromServer() {
-        String url = "https://api.myjson.com/bins/dkbg4";
+        String url = "https://api.myjson.com/bins/zobpe";
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONArray>() {
