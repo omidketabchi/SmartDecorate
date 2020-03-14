@@ -104,7 +104,7 @@ public class FragmentCategory extends Fragment {
         txtList1.setText(categoryModels.get(0).getTitle());
         txtList2.setText(categoryModels.get(1).getTitle());
         txtList3.setText(categoryModels.get(4).getTitle());
-        txtList4.setText(categoryModels.get(4).getTitle());
+        txtList4.setText(categoryModels.get(2).getTitle());
     }
 
     private void setupViews() {
@@ -127,6 +127,7 @@ public class FragmentCategory extends Fragment {
         txtList1 = (TextView) view.findViewById(R.id.txt_fragmentCategory_list1);
         txtList2 = (TextView) view.findViewById(R.id.txt_fragmentCategory_list2);
         txtList3 = (TextView) view.findViewById(R.id.txt_fragmentCategory_list3);
+        txtList4 = (TextView) view.findViewById(R.id.txt_fragmentCategory_list4);
 
         recyclerView1 = (RecyclerView) view.findViewById(R.id.rv_fragmentCategory_list1);
         recyclerView1.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));

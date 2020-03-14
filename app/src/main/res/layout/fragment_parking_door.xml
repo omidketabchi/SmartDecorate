@@ -85,7 +85,7 @@
             android:layout_margin="8dp"
             android:background="@drawable/btn_style"
             android:padding="8dp"
-            android:text="ذخیره"
+            android:text="باز"
             android:textColor="@color/colorWhite"
             android:textSize="16sp" />
 

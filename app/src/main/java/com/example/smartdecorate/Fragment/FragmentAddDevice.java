@@ -127,7 +127,7 @@ public class FragmentAddDevice extends Fragment {
                         Toast.makeText(getContext(), "detail:" + id, Toast.LENGTH_SHORT).show();
                     } else if (deviceType.equals(getString(R.string.str_device_name_parking_door))) {
                         dataBase = new DeviceDataBase(getContext(), DeviceType.NOTHING);
-                        id = dataBase.insertParkingInfo((int) id, DEFAULT_FIRST_DOOR, DEFAULT_BOTH_OF_THEM);
+                        id = dataBase.updateParkingInfo((int) id, DEFAULT_FIRST_DOOR, DEFAULT_BOTH_OF_THEM);
 
                         Toast.makeText(getContext(), "detail:" + id, Toast.LENGTH_SHORT).show();
                     }

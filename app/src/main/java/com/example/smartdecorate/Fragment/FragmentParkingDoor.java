@@ -5,13 +5,11 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatRadioButton;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.DialogFragment;
@@ -57,13 +55,38 @@ public class FragmentParkingDoor extends DialogFragment {
         rdbBothOfThem = (AppCompatRadioButton) view.findViewById(R.id.rdb_fragmentParkingDoor_bothDoor);
         btnSave = (Button) view.findViewById(R.id.btn_fragmentParkingDoor_save);
 
+
+        firstDoor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (rdbBothOfThem.isChecked()) {
+                    rdbBothOfThem.setChecked(false);
+                }
+
+                rdbFirstDoor.setChecked(true);
+            }
+        });
+
         rdbFirstDoor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if (rdbFirstDoor.isChecked()) {
+                if (rdbBothOfThem.isChecked()) {
                     rdbBothOfThem.setChecked(false);
                 }
+
+                rdbFirstDoor.setChecked(true);
+            }
+        });
+
+        bothOfThem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (rdbFirstDoor.isChecked()) {
+                    rdbFirstDoor.setChecked(false);
+                }
+
+                rdbBothOfThem.setChecked(true);
             }
         });
 
@@ -71,9 +94,11 @@ public class FragmentParkingDoor extends DialogFragment {
             @Override
             public void onClick(View v) {
 
-                if (rdbBothOfThem.isChecked()) {
+                if (rdbFirstDoor.isChecked()) {
                     rdbFirstDoor.setChecked(false);
                 }
+
+                rdbBothOfThem.setChecked(true);
             }
         });
 
@@ -83,11 +108,13 @@ public class FragmentParkingDoor extends DialogFragment {
 
                 DeviceDataBase dataBase = new DeviceDataBase(getContext(), DeviceType.NOTHING);
 
-                dataBase.insertParkingInfo(Integer.parseInt(model.getId()),
+                long id = dataBase.updateParkingInfo(Integer.parseInt(model.getId()),
                         (rdbFirstDoor.isChecked()) ? 1 : 0,
                         (rdbBothOfThem.isChecked()) ? 1 : 0);
 
                 dismiss();
+
+                Toast.makeText(getContext(), id + "", Toast.LENGTH_SHORT).show();
             }
         });
     }

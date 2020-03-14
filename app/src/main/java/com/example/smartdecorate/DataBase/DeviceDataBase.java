@@ -347,7 +347,7 @@ public class DeviceDataBase extends SQLiteOpenHelper {
         return sqLiteDatabase.rawQuery(query, null);
     }
 
-    public long insertParkingInfo(int id, int firstDoor, int bothOfThem) {
+    public long updateParkingInfo(int id, int firstDoor, int bothOfThem) {
 
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
 
@@ -357,6 +357,8 @@ public class DeviceDataBase extends SQLiteOpenHelper {
         contentValues.put(COLUMN_PARKING_DOOR_TABLE_FIRST_DOOR, firstDoor);
         contentValues.put(COLUMN_PARKING_DOOR_TABLE_BOTH_OF_THEM, bothOfThem);
 
-        return sqLiteDatabase.insert(PARKING_DOOR_TABLE, null, contentValues);
+        return sqLiteDatabase.update(PARKING_DOOR_TABLE, contentValues,
+                COLUMN_PARKING_DOOR_TABLE_ID + " = ? ",
+                new String[]{String.valueOf(id)});
     }
 }
